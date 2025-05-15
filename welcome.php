@@ -24,7 +24,7 @@ if (isset($_POST['btn_start_quiz'])) {
 
 
 if ($id_pengunjung) {
-  include 'start_quiz.php';
+  include 'quiz-started.php';
 } else {
 ?>
 

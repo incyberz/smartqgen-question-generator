@@ -1,0 +1,52 @@
+/* Container progress */
+.progress {
+  display: flex;
+  height: 1rem;
+  overflow: hidden;
+  background-color: #e9ecef;
+  border-radius: 0.375rem;
+  box-shadow: inset 0 0.1rem 0.1rem rgba(0, 0, 0, 0.1);
+}
+
+/* Isi progress bar */
+.progress-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background-color: #0d6efd; /* Default blue */
+  transition: width 0.6s ease;
+  white-space: nowrap;
+  padding: 0 0.5rem;
+}
+
+/* Warna biru utama */
+.progress-bar-primary {
+  background-color: #0d6efd;
+}
+
+/* Animasi strip berjalan */
+.progress-bar-animated {
+  animation: progress-bar-stripes 1s linear infinite;
+  background-image: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
+  );
+  background-size: 1rem 1rem;
+}
+
+/* Animasi strip bergerak */
+@keyframes progress-bar-stripes {
+  from {
+    background-position: 1rem 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}

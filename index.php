@@ -33,6 +33,7 @@ if ($_GET) {
     break;
   }
 }
+$param = $param ?? 'welcome';
 
 
 # ============================================================
@@ -43,23 +44,15 @@ include 'conn.php';
 // include 'global_vars.php';
 
 $dotdot = $is_live ? '.' : '..';
-if (1) {
+# ============================================================
+# INCLUDES
+# ============================================================
+include 'includes/alert.php';
+include 'includes/insho_styles.php';
+include 'includes/img_icon.php';
+include 'includes/jsurl.php';
+include 'includes/set_h2.php';
 
-  # ============================================================
-  # INCLUDES
-  # ============================================================
-  include 'includes/alert.php';
-  include 'includes/insho_styles.php';
-  include 'includes/img_icon.php';
-  include 'includes/jsurl.php';
-  include 'includes/set_h2.php';
-
-  # ============================================================
-  # GLOBAL SELECT
-  # ============================================================
-  // include 'pages/SELECT.php';
-
-} // end if $username
 
 # ============================================================
 # USER DATA
@@ -80,6 +73,9 @@ if ($id_pengunjung) {
   $nama_pengunjung = $pengunjung['nama'];
 }
 
+$debug_id_pengunjung = "<i class=red>id: $id_pengunjung</i>";
+$debug_nama_pengunjung = "<i class=red>nama: $nama_pengunjung</i>";
+
 
 
 ?>
@@ -98,7 +94,8 @@ if ($id_pengunjung) {
 
 <body>
   <div class="container">
-    <?php include 'welcome.php'; ?>
+    <?php if ($id_pengunjung) include 'btn_logout.php'; ?>
+    <?php include "$param.php"; ?>
     <?php
     // echo '<pre>SESSION: ';
     // print_r($_SESSION);
@@ -112,3 +109,5 @@ if ($id_pengunjung) {
 </body>
 
 </html>
+<?php
+include 'includes/script_btn_aksi.php';
