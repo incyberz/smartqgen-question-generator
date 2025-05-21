@@ -1,0 +1,466 @@
+<link rel="stylesheet" href="assets/css/progress.css">
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script> -->
+<script src="./assets/js/crypto-js.min.js"></script>
+<?php
+include 'quiz-process.php';
+include 'quiz-styles.php';
+include 'quiz-functions.php';
+$max_soal = 5; // limitt soal
+$total_second = 1200; // detik
+$get_no = $_GET['no'] ?? 1;
+$img_logout = img_icon('logout');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ============================================================
+# MAIN SELECT DATA SOAL
+# ============================================================
+// $session_id_soals = $_SESSION['id_soals'] ?? null;
+// if ($session_id_soals) {
+//   $rid_soal = explode(',', $session_id_soals);
+//   $sql_id_soal = '';
+//   foreach ($rid_soal as $id_soal) {
+//     if ($id_soal) {
+//       $OR = $sql_id_soal ? 'OR' : '';
+//       $sql_id_soal .= " $OR id = $id_soal ";
+//     }
+//   }
+//   $sql_id_soal = "WHERE $sql_id_soal ORDER BY id LIMIT $max_soal";;
+// } else {
+//   $sql_id_soal = "ORDER BY id LIMIT $max_soal";
+// }
+
+# ============================================================
+# DELETE JAWABAN SEBELUMNYA
+# ============================================================
+$s = "DELETE FROM tb_jawaban WHERE id_pengunjung = $id_pengunjung";
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+echo "
+  <script>//localStorage.removeItem('jawaban_kuis_encrypted');</script>
+";
+
+
+
+echo "<i class=hideit id=total_second>$total_second</i>";
+
+
+# ============================================================
+# LAPORKAN SOAL
+# ============================================================
+$laporkan_soal = '';
+include 'laporkan_soal.php';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ============================================================
+# NAV SPAN SOAL
+# ============================================================
+
+$nav_soals = '';
+for ($i = 1; $i <= 30; $i++) {
+  $nav_soals .= "<div class='nav-soal' id=nav-soal--$i>$i</div>";
+}
+
+
+
+# ============================================================
+# FINAL ECHO
+# ============================================================
+echo "
+  <form method=post id=form-quiz>
+    <h1>Quiz Started</h1>
+
+    <div class=blok-timer-logout>
+      <div class='flex flex-between'>
+        <div class=blok-timer>
+          <div class='item-timer' id=mnt>00</div>
+          <div class='item-timer'>:</div>
+          <div class='item-timer' id=dtk>00</div>
+        </div>
+        <div>
+          <a href='?logout' onclick='return confirm(`Ahhh kaburrr?`)'>$img_logout</a>
+        </div>
+      </div>
+    </div>
+
+
+    
+    <div id=konten-soal>
+      <div class=info-soal>
+        <div class=row-info-soal>
+          <div><b>Mapel</b>: <span id=mapel>mapel</span> - <span id=tingkat>tingkat</span></div>
+          <div class=right><b>Level</b>: <i>medium</i></div>
+        </div>
+        <div><b>Materi</b>: <span id=materi>materi</span></div>
+      </div>
+
+      <div class=blok-kalimat-soal>
+        <div id=kalimatSoal>kalimatSoal</div>
+        <div id=gambarSoal>gambarSoal</div>
+      </div>
+      
+      <div class=blok-opsi>
+        <div class='opsi' id=opsi1>opsi1</div>
+        <div class='opsi' id=opsi2>opsi2</div>
+        <div class='opsi' id=opsi3>opsi3</div>
+        <div class='opsi' id=opsi4>opsi4</div>
+      </div>
+    </div>
+
+    <div class=blok-bawah>
+      <div class='blok-progress'>
+        <div class='f14 mb2 blok-nav-soal'>
+          $nav_soals
+        </div>
+        <div class='progress'>
+          <div id=progressBar class='progress-bar progress-bar-success progress-bar-animated' style='width:0%'></div>
+        </div>
+      </div>    
+
+      <div class='blok-btn-submit hideit'>
+        <span class='btn btn-primary w-100 btn-lg mb4' name=submit-btn id=submit-btn>Submit</span>
+      </div>
+
+      <div class='blok-laporkan-soal'>
+        $laporkan_soal
+      </div>
+    </div>
+  </form>
+";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+?>
+<script>
+  const secretKey = "SmartQGen2025";
+  let currentIndex = 0;
+  let persen = 0;
+  let jawabanList = [];
+  let soalList = [];
+
+
+  // Enkripsi data JSON dan simpan localStorage
+  function simpanJawabanEnkripsi(idSoal, jawaban) {
+    if (!idSoal) {
+      alert('undefined idSoal pada function simpanJawabanEnkripsi');
+      return;
+    }
+    let data = loadJawabanEnkripsi();
+    data[idSoal] = jawaban;
+    let dataString = JSON.stringify(data);
+
+    let ciphertext = CryptoJS.AES.encrypt(dataString, secretKey).toString();
+    localStorage.setItem("jawaban_kuis_encrypted", ciphertext);
+  }
+
+  // Load dan dekripsi data dari localStorage
+  function loadJawabanEnkripsi() {
+    let ciphertext = localStorage.getItem("jawaban_kuis_encrypted");
+    if (!ciphertext) return {};
+    let bytes = CryptoJS.AES.decrypt(ciphertext, secretKey);
+    let decryptedData = bytes.toString(CryptoJS.enc.Utf8);
+    try {
+      return JSON.parse(decryptedData);
+    } catch {
+      return {};
+    }
+  }
+
+  // Render soal ke halaman
+  function renderSoal(index) {
+    const soalObj = soalList[index];
+
+
+
+
+    $('#konten-soal').fadeOut();
+
+
+    $('#tingkat').text(soalObj.tingkat);
+    $('#mapel').text(soalObj.mapel);
+    $('#materi').text(soalObj.materi);
+    $('#kalimatSoal').text(soalObj.kalimat_soal);
+
+    if (soalObj.gambar) {
+      $('#gambarSoal').html(`<img src="assets/img/soal/${soalObj.gambar}" class="gambar-soal" alt="gambar-soal">`);
+    } else {
+      $('#gambarSoal').html('');
+    }
+
+    // manajemen opsi
+    $('.opsi').removeClass('opsi-selected');
+    const savedJawaban = loadJawabanEnkripsi()[soalObj.id] || null;
+    let i = 0;
+    soalObj.opsi.forEach((pil, i) => {
+      i++;
+      $('#opsi' + i).text(pil);
+      const opsiSelected = pil == savedJawaban ? 1 : 0;
+      if (opsiSelected) {
+        $('#opsi' + i).addClass("opsi-selected");
+        $('#nav-soal--' + (index + 1)).addClass("terjawab");
+      }
+    });
+
+
+
+    // update nav soal
+    $('.nav-soal').removeClass('soal-ke');
+    $('#nav-soal--' + (currentIndex + 1)).addClass('soal-ke');
+
+    $('#konten-soal').fadeIn();
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  $(function() {
+
+    jawabanList = loadJawabanEnkripsi() || null;
+    console.log('jawabanList', jawabanList);
+    // // add class terjawab untuk nav-soal
+    // for (let i = 1; i <= Object.keys(jawabanList).length; i++) {
+    //   const jawaban = jawabanList[i] || null;
+    //   console.log('jawaban', jawaban);
+
+    //   if (jawaban) {
+    //     $('#nav-soal--' + i).addClass('terjawab');
+    //   }
+    // }
+
+
+
+    soalList = JSON.parse(localStorage.getItem('soalList') || '[]');
+
+    if (soalList) {
+      // return;
+      // show nav-soal
+      for (let i = 1; i <= soalList.length; i++) {
+        $('#nav-soal--' + i).fadeIn();
+      }
+
+      // render first soal
+      renderSoal(currentIndex);
+    } else {
+
+      $.ajax({
+        url: 'pages/quiz-get_soal.php',
+        method: 'GET',
+        dataType: 'json',
+        success: function(response) {
+          soalList = Object.values(response);
+
+          if (!soalList) {} else {
+            localStorage.setItem('soalList', JSON.stringify(soalList));
+          }
+
+          // show nav-soal
+          for (let i = 1; i <= soalList.length; i++) {
+            $('#nav-soal--' + i).fadeIn();
+          }
+
+          // render first soal
+          renderSoal(currentIndex);
+        },
+        error: function(xhr, status, error) {
+          console.error('Gagal mengambil soal:', error);
+        }
+      });
+    }
+
+
+
+
+
+    $('.opsi').click(function() {
+      $('.opsi').removeClass('opsi-selected');
+      $(this).addClass('opsi-selected');
+
+      const soalObj = soalList[currentIndex];
+      simpanJawabanEnkripsi(soalObj.id, $(this).text());
+      // update progress
+      const jawaban = loadJawabanEnkripsi();
+
+      persen = Object.keys(jawaban).length * 100 / soalList.length;
+      $('#progressBar').prop('style', `width:${persen}%`);
+
+      // show btn_submit
+      if (persen == 100) {
+        $('.blok-btn-submit').slideDown();
+        $('.progress').slideUp();
+      }
+
+
+      // update status soal: terjawab | belum
+      $('#nav-soal--' + (currentIndex + 1)).addClass('terjawab');
+
+      // auto NEXT ketika menjawab
+      if (currentIndex < soalList.length - 1) {
+        currentIndex++;
+        renderSoal(currentIndex);
+      }
+    });
+
+    $('.nav-soal').click(function() {
+      currentIndex = parseInt($(this).text()) - 1;
+      renderSoal(currentIndex);
+    });
+
+    $('#submit-btn').click(function() {
+
+      $.ajax({
+        url: 'pages/quiz-cek_jawaban.php',
+        success: function(r) {
+          console.log(r);
+        },
+        error: function(xhr, status, error) {
+          console.error('Gagal CEK JAWABAN:', error);
+        }
+      });
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    let totalSeconds = parseInt($('#total_second').text()); // Total waktu pengerjaan (120 detik)
+    let timer;
+
+    function updateDisplay() {
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+
+      $('#mnt').text(minutes.toString().padStart(2, '0'));
+      $('#dtk').text(seconds.toString().padStart(2, '0'));
+    }
+
+    function startTimer() {
+      timer = setInterval(() => {
+        totalSeconds--;
+
+        if (totalSeconds < 0) {
+          clearInterval(timer);
+          $('#mnt, #dtk').text('00');
+          alert("Waktu habis!");
+          $('#submit-btn').click();
+          // Bisa juga auto-submit form di sini
+          return;
+        }
+
+        updateDisplay();
+      }, 1000); // 1 detik
+    }
+
+    // renderSoal(currentIndex);
+    updateDisplay();
+    startTimer();
+  });
+</script>

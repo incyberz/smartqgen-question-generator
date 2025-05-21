@@ -6,22 +6,7 @@ session_start();
 # ============================================================
 # SESSION
 # ============================================================
-$username = $_SESSION['qgen_username'] ?? null;
 $id_pengunjung = $_SESSION['qgen_id_pengunjung'] ?? null;
-// $role = $_SESSION['qgen_role'] ?? null;
-
-
-// ZZZ
-// $_SESSION['qgen_username'] = 'admin';
-// $_SESSION['qgen_role'] = 'admin';
-
-# ============================================================
-# PETUGAS DEFAULT
-# ============================================================
-// $petugas_default = [
-//   'nama' => 'Dasep Solehuddin',
-//   'whatsapp' => '6287729007318',
-// ];
 
 # ============================================================
 # GET PARAM
@@ -37,9 +22,8 @@ $param = $param ?? 'welcome';
 
 
 # ============================================================
-# CONFIGIRATION FILE
+# CONN & CONFIGIRATION FILE
 # ============================================================
-// include 'config.php';
 include 'conn.php';
 // include 'global_vars.php';
 
@@ -57,24 +41,13 @@ include 'includes/set_h2.php';
 # ============================================================
 # USER DATA
 # ============================================================
-// $user = [];
-// $nama_user = '';
-// $is_adm = false;
-// include 'pages/user.php';
-
-
 $pengunjung = [];
-$nama_pengunjung = null;
-if ($id_pengunjung) {
-  $s = "SELECT * FROM tb_pengunjung ORDER BY created_at DESC LIMIT 1";
-  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-  $pengunjung = mysqli_fetch_assoc($q);
-  $id_pengunjung = $pengunjung['id'];
-  $nama_pengunjung = $pengunjung['nama'];
-}
+$user = [];
+include 'pages/user.php';
+$username = $pengunjung['username'] ?? null;
+$nama_pengunjung = $pengunjung['nama'] ?? null;
+$nama_user = $user['nama'] ?? null;
 
-$debug_id_pengunjung = "<i class=red>id: $id_pengunjung</i>";
-$debug_nama_pengunjung = "<i class=red>nama: $nama_pengunjung</i>";
 
 
 
@@ -94,17 +67,7 @@ $debug_nama_pengunjung = "<i class=red>nama: $nama_pengunjung</i>";
 
 <body>
   <div class="container">
-    <?php if ($id_pengunjung) include 'btn_logout.php'; ?>
-    <?php include "$param.php"; ?>
-    <?php
-    // echo '<pre>SESSION: ';
-    // print_r($_SESSION);
-    // echo '</pre>';
-    // echo '<pre>PENGUNJUNG: ';
-    // print_r($pengunjung);
-    // echo '</pre>';
-
-    ?>
+    <?php include "pages/$param.php"; ?>
   </div>
 </body>
 

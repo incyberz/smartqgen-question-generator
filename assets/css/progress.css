@@ -20,10 +20,14 @@
   padding: 0 0.5rem;
 }
 
-/* Warna biru utama */
 .progress-bar-primary {
   background-color: #0d6efd;
 }
+
+.progress-bar-success {
+  background-color: #198754;
+}
+
 
 /* Animasi strip berjalan */
 .progress-bar-animated {
