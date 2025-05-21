@@ -1,9 +1,10 @@
 <?php
+session_start();
 include '../conn.php';
 include 'quiz-functions.php';
 
 header('Content-Type: application/json');
-$id_pengunjung = 1; // TODO: ambil dari session atau parameter aman
+$id_pengunjung = $_SESSION['qgen_id_pengunjung'] ?? die('not login'); // TODO: ambil dari session atau parameter aman
 
 # ============================================================
 # MAIN SELECT SOAL
@@ -49,5 +50,4 @@ while ($soal = mysqli_fetch_assoc($q)) {
     'opsi' => array_values($opsi), // pastikan urut
   ];
 }
-
 echo json_encode($soalList, JSON_UNESCAPED_UNICODE);

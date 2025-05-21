@@ -137,8 +137,17 @@ if ($id_pengunjung) {
 
 
 
-
+  # ============================================================
+  # DELETE JAWABAN SEBELUMNYA
+  # ============================================================
+  // $s = "DELETE FROM tb_jawaban WHERE id_pengunjung = $id_pengunjung";
+  // $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 ?>
+  <script>
+    localStorage.removeItem('jawaban_kuis_encrypted');
+    localStorage.removeItem('soalList');
+  </script>
+
   <form method="POST" class=form-welcome>
     <h1>Selamat Datang di <span style="color:#00bcd4;">SmartQGen</span></h1>
     <p class="mb4">Soal Dinamis, Evaluasi Otomatis!</p>

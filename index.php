@@ -67,6 +67,7 @@ $nama_user = $user['nama'] ?? null;
 
 <body>
   <div class="container">
+    <span id="id_pengunjung" class="hideit"><?= $id_pengunjung ?></span>
     <?php include "pages/$param.php"; ?>
   </div>
 </body>

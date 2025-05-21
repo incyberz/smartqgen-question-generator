@@ -1,10 +1,12 @@
 <link rel="stylesheet" href="assets/css/progress.css">
+<link rel="stylesheet" href="assets/css/quiz.css">
+<!-- <link rel="stylesheet" href="assets/css/bootstrap.min.css"> -->
 <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script> -->
 <script src="./assets/js/crypto-js.min.js"></script>
 <?php
 include 'quiz-process.php';
-include 'quiz-styles.php';
 include 'quiz-functions.php';
+include 'quiz-hasil_quiz.php';
 $max_soal = 5; // limitt soal
 $total_second = 1200; // detik
 $get_no = $_GET['no'] ?? 1;
@@ -51,14 +53,7 @@ $img_logout = img_icon('logout');
 //   $sql_id_soal = "ORDER BY id LIMIT $max_soal";
 // }
 
-# ============================================================
-# DELETE JAWABAN SEBELUMNYA
-# ============================================================
-$s = "DELETE FROM tb_jawaban WHERE id_pengunjung = $id_pengunjung";
-$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-echo "
-  <script>//localStorage.removeItem('jawaban_kuis_encrypted');</script>
-";
+
 
 
 
@@ -162,6 +157,7 @@ echo "
         $laporkan_soal
       </div>
     </div>
+    $hasil_quiz
   </form>
 ";
 
@@ -218,6 +214,7 @@ echo "
 
   // Load dan dekripsi data dari localStorage
   function loadJawabanEnkripsi() {
+
     let ciphertext = localStorage.getItem("jawaban_kuis_encrypted");
     if (!ciphertext) return {};
     let bytes = CryptoJS.AES.decrypt(ciphertext, secretKey);
@@ -232,6 +229,10 @@ echo "
   // Render soal ke halaman
   function renderSoal(index) {
     const soalObj = soalList[index];
+    if (!soalObj) {
+      alert('undefined soalObj pada function renderSoal');
+      return;
+    }
 
 
 
@@ -308,11 +309,9 @@ echo "
   $(function() {
 
     jawabanList = loadJawabanEnkripsi() || null;
-    console.log('jawabanList', jawabanList);
     // // add class terjawab untuk nav-soal
     // for (let i = 1; i <= Object.keys(jawabanList).length; i++) {
     //   const jawaban = jawabanList[i] || null;
-    //   console.log('jawaban', jawaban);
 
     //   if (jawaban) {
     //     $('#nav-soal--' + i).addClass('terjawab');
@@ -322,8 +321,9 @@ echo "
 
 
     soalList = JSON.parse(localStorage.getItem('soalList') || '[]');
+    if (soalList.length) {
+      console.log('soalList diambil dari localStorage:', soalList);
 
-    if (soalList) {
       // return;
       // show nav-soal
       for (let i = 1; i <= soalList.length; i++) {
@@ -334,12 +334,17 @@ echo "
       renderSoal(currentIndex);
     } else {
 
+      // return;
+
+
       $.ajax({
         url: 'pages/quiz-get_soal.php',
         method: 'GET',
         dataType: 'json',
         success: function(response) {
           soalList = Object.values(response);
+          console.log('response AJAX:', response);
+
 
           if (!soalList) {} else {
             localStorage.setItem('soalList', JSON.stringify(soalList));
@@ -399,10 +404,17 @@ echo "
 
     $('#submit-btn').click(function() {
 
+      jawabanList = loadJawabanEnkripsi() || null;
+      const jsonStr = JSON.stringify(jawabanList);
+      const encoded = encodeURIComponent(jsonStr);
+
+      const id_pengunjung = $('#id_pengunjung').text();
+
       $.ajax({
-        url: 'pages/quiz-cek_jawaban.php',
+        url: 'pages/quiz-cek_jawaban.php?id_pengunjung=' + id_pengunjung + '&jawabans=' + encoded,
         success: function(r) {
-          console.log(r);
+          $('#hasil-quiz').html(r);
+          $('#hasil-quiz').slideDown();
         },
         error: function(xhr, status, error) {
           console.error('Gagal CEK JAWABAN:', error);
