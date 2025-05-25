@@ -34,14 +34,12 @@ shuffle($opsi);
 # ============================================================
 $variabel_json = json_encode($randomVars);
 mysqli_query($cn, "INSERT INTO tb_jawaban (
-  id, 
-  id_pengunjung, 
+  id_paket, 
   id_soal, 
   variabel_json, 
   jawaban_benar
 ) VALUES (
-  '$id_pengunjung-$id_soal',
-  $id_pengunjung, 
+  $id_paket, 
   $id_soal, 
   '$variabel_json', 
   '$jawaban_benar'

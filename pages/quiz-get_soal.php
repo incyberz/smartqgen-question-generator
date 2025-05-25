@@ -5,6 +5,40 @@ include 'quiz-functions.php';
 
 header('Content-Type: application/json');
 $id_pengunjung = $_SESSION['qgen_id_pengunjung'] ?? die('not login'); // TODO: ambil dari session atau parameter aman
+$username = $_SESSION['qgen_username'] ?? null;
+
+
+
+# ============================================================
+# DELETE PAKET SOAL KOSONG DAN LJK NYA
+# ============================================================
+$s = "SELECT id FROM tb_paket WHERE status is null AND id_pengunjung=$id_pengunjung";
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+while ($d = mysqli_fetch_assoc($q)) {
+  $s2 = "DELETE FROM tb_jawaban WHERE id_paket = $d[id] AND archived is null";
+  $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
+}
+
+
+# ============================================================
+# BUAT PAKET BARU
+# ============================================================
+$s = "INSERT INTO tb_paket (id_pengunjung) VALUES ($id_pengunjung)";
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+
+# ============================================================
+# DAPATKAN ID PAKET
+# ============================================================
+$s = "SELECT id FROM tb_paket WHERE status is null";
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+if (!mysqli_num_rows($q)) die('Tidak dapat membuat Paket Baru.');
+$d = mysqli_fetch_assoc($q);
+$id_paket = $d['id'];
+$_SESSION['qgen_id_paket'] = $id_paket;
+
+
+
+
 
 # ============================================================
 # MAIN SELECT SOAL
@@ -50,4 +84,5 @@ while ($soal = mysqli_fetch_assoc($q)) {
     'opsi' => array_values($opsi), // pastikan urut
   ];
 }
+$_SESSION['qgen_mulai_quiz'] = time();
 echo json_encode($soalList, JSON_UNESCAPED_UNICODE);

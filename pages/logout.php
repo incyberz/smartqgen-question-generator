@@ -1,8 +1,8 @@
 <?php
-unset($_SESSION['mulai_mengerjakan']);
-unset($_SESSION['nomor_soal']);
-unset($_SESSION['id_soals']);
 unset($_SESSION['qgen_id_pengunjung']);
+unset($_SESSION['qgen_mulai_quiz']);
+unset($_SESSION['qgen_username']);
+unset($_SESSION['qgen_id_paket']);
 if ($_SESSION) {
   echo '<pre>';
   print_r($_SESSION);

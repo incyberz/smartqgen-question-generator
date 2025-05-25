@@ -1,6 +1,6 @@
 <?php
 $hasil_quiz = "
-  <div id=hasil-quiz>
+  <div class=hasil-quiz>
     <h1 class='text-center'>🎉 Quiz Selesai</h1>
 
     <div class='score-box'>

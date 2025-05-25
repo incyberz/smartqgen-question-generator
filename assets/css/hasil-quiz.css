@@ -1,0 +1,50 @@
+.hasil-quiz table,.leaderboard table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  color: #fff;
+}
+
+.hasil-quiz th,
+.hasil-quiz td,
+.leaderboard th,
+.leaderboard td {
+  border: 1px solid #555;
+  padding: 10px;
+  text-align: center;
+}
+
+.hasil-quiz th,
+.leaderboard th {
+  background-color: #333;
+}
+
+.score-box {
+  background-color: #222;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 24px;
+  color: #0f0;
+}
+
+.hasil-quiz {
+  display: none;
+  position: absolute;
+  inset: -8px -8px -12px -8px;
+  z-index: 999;
+  background: #1e1e1e;
+  padding: 8px 8px 12px 8px;
+  color: white
+}
+
+.leaderboard{
+  background: #1e1e1e;
+  color: white
+}
+
+.my-data{
+  background: #afa;
+  color: blue;
+  font-weight: bold;
+}

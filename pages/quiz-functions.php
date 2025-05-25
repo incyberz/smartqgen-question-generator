@@ -2,6 +2,9 @@
 function generateRandomValue($range)
 {
   list($min, $max) = explode("-", $range);
+  # ============================================================
+  # ROUND MIN MAX JIKA > 100
+  # ============================================================
   return rand((int)$min, (int)$max);
 }
 
