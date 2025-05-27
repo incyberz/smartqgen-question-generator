@@ -4,7 +4,9 @@ if ($id_pengunjung) {
     $s = "SELECT a.*,
     b.sebagai,
     c.id as id_pengunjung,
-    c.created_at 
+    c.created_at,
+    (SELECT posisi_ortu FROM tb_ortu WHERE username=a.username) posisi_ortu, 
+    (SELECT COUNT(1) FROM tb_kelas WHERE username=a.username) jumlah_kelas 
     FROM tb_user a 
     JOIN tb_role b ON a.role=b.id
     JOIN tb_pengunjung c ON a.id_pengunjung=c.id
@@ -34,4 +36,7 @@ if ($id_pengunjung) {
       $_SESSION['qgen_username'] = $user['username'];
     }
   }
+  $_SESSION['qgen_role'] = $user['role'];
+  $user['nama'] = $user['nama'] ?? '';
+  $user['nama'] = ucwords(strtolower($user['nama']));
 }

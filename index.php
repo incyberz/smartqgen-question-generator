@@ -70,6 +70,8 @@ $nama_user = $user['nama'] ?? null;
   include 'includes/img_icon.php';
   include 'includes/jsurl.php';
   include 'includes/set_h2.php';
+  include 'includes/only.php';
+  include 'includes/akses.php';
 
   $img_logout = img_icon('logout');
 

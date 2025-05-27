@@ -5,6 +5,10 @@ if (isset($_POST['btn_claim_poin'])) {
   $s = "UPDATE tb_paket SET status=100 WHERE id = $_POST[btn_claim_poin]";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   jsurl();
+} elseif (isset($_POST['posisi_ortu'])) {
+  $s = "UPDATE tb_ortu SET posisi_ortu=$_POST[posisi_ortu] WHERE username = '$username'";
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  jsurl();
 } elseif ($_POST) {
 
   echo '<pre>';

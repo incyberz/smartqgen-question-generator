@@ -71,16 +71,19 @@ if ($id_pengunjung) {
     <h1>Selamat Datang di <span style="color:#00bcd4;">SmartQGen</span></h1>
     <p class="mb4">Soal Dinamis, Evaluasi Otomatis!</p>
 
-    <!-- <div class="tengah blok-logo">
+    <div class="tengah blok-logo">
       <img src="assets/img/logo.png" alt="logo" class="logo">
-    </div> -->
+    </div>
 
-    <div class='blok-opsies-and-login hideita'>
+    <div class='blok-opsies-and-login hideit'>
       <div class="blok-opsies">
         <?= $opsi_quiz ?>
       </div>
 
       <div class="mt4 pt4 border-top">
+        <a href=?register class="btn btn-secondary">
+          Register 👉
+        </a>
         <span class="btn btn-secondary" id=show-login>
           Login 👉
         </span>

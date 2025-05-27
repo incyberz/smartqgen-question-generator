@@ -6,168 +6,112 @@
     font-weight: bold;
   }
 </style>
-<h1>Dashboard</h1>
-<p>Selamat Datang <?= ucwords(strtolower($user['nama'])) ?> 👐</p>
-<div class="f12">Anda login sebagai <?= $user['sebagai'] ?></div>
 <?php
 include 'dashboard-process.php';
 include 'opsi_quiz.php';
 include "$dotdot/includes/hari_tanggal.php";
 
 # ============================================================
-# HITUNG LP
+# WAJIB VERIFIKASI WHATSAPP
 # ============================================================
-$lp = $user['basic_lp'];
-
-# ===============================
-# Ambil Data Paket
-# ===============================
-$s = "SELECT 
-a.* 
-FROM tb_paket a 
-WHERE a.id_pengunjung = $id_pengunjung 
--- AND status < 100 -- belum di claim
-";
-
-
-
-$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-
-if (!mysqli_num_rows($q)) {
-  die('Tidak ada Paket Kuis untuk pengunjung ini.');
-} else {
-
-  $num_rows = mysqli_num_rows($q);
-  $unclaim_no = 0;
-  $last_kuis_no = 0;
-  $tr_unclaim = '';
-  $tr_last_kuis = '';
-
-  while ($d = mysqli_fetch_assoc($q)) {
-    # ============================================================
-    # AUTO DELETE IF STATUS PAKET IS NULL
-    # ============================================================
-    if (!$d['status']) {
-      $s2 = "DELETE FROM tb_paket WHERE id=$d[id]";
-      mysqli_query($cn, $s2) or die(mysqli_error($cn));
-    }
-
-    # ============================================================
-    # LOOP BIASA | VALID ONLY
-    # ============================================================
-    $tgl = tanggal($d['waktu_submit']);
-    $jam = date('H:i', strtotime($d['waktu_submit']));
-
-    if ($d['status'] == 100) {
-      $lp += $d['poin'];
-      $last_kuis_no++;
-      $tr_last_kuis .= "
-        <tr>
-          <td>
-            <div>$tgl <i class='f12 abu'>$jam</i></div>
-            <div><b class='f14'>Nilai</b>: $d[nilai] ~ <i class='f12 abu'>$d[poin] LP</i></div>
-          </td>
-          <td >
-            <div>✅<i class='f12 putih'>Claimed</i></div>
-          </td>
-        </tr>
-      ";
-    } else {
-      $unclaim_no++;
-      $tr_unclaim .= "
-        <tr>
-          <td>
-            <div>$tgl <i class='f12 abu'>$jam</i></div>
-            <div><b class='f14'>Nilai</b>: $d[nilai] ~ <i class='f12 abu'>$d[poin] LP</i></div>
-          </td>
-          <td >
-            <div>⚠️<i class='f12 yellow'>unclaim</i></div>
-            <button name=btn_claim_poin value=$d[id] class='transparan f12 yellow hover' onclick='return confirm(`Claim $d[poin] LP?`)'>Claim XP</button> 
-             | 
-            <button name=btn_hapus_poin value=$d[id] class='transparan f12 yellow hover' onclick='return confirm(`Hapus poin?`)' >Hapus</button> 
-          </td>
-        </tr>
-      ";
-    }
+$whatsapp_info = '';
+$fitur_khusus = '';
+if (!$user['whatsapp_status']) {
+  if ($user['role'] > 1) { // wajib verifikasi bagi ortu, pengajar, dll
+    $time = date('F d, Y, H:i:s');
+    $pesan = "Yth. Admin SmartQGen%0a%0aMohon untuk verifikasi whatsapp saya:%0a- Nama: $user[nama]%0a- Whatsapp: $user[whatsapp]%0a- Sebagai: $user[sebagai] [$user[role]]%0a- Tanggal Register: $user[created_at]%0aTerimakasih.%0a%0aFrom: Gamified Quiz System, $time";
+    $text_wa = urlencode($pesan);
+    $text_preview = str_replace('%0a', '<br>', $pesan);
+    $link_whatsapp = "<a class='btn btn-primary w-100' href='https://api.whatsapp.com/?send&phone=6287729007318&text=$text_wa'>Kirim Whatsapp</a>";
+    $whatsapp_info = "
+      <div class='wadah gradasi-merah red'>
+        Whatsapp Anda belum terverifikasi oleh Admin
+        <div class='gradasi-toska p3 mb2 mt2 f12 left abu'>$text_preview</div>
+        $link_whatsapp
+      </div>
+    ";
   }
-
-  if ($tr_unclaim) {
-    $unclaim_points = "
-      <h2 class='tengah f20 pt4 mt4 border-top'>🏅 Unclaim Points</h2>
-      <p>Jika kamu claim maka Total Poin kamu bertambah dan data masuk ke History Kuis</p>
-      <form method=post>
-        <table id=tb-hasil-quiz>
-          <thead>
-            <tr>
-              <th>Tanggal</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            $tr_unclaim
-          </tbody>
-        </table>
-      </form>
-    ";
+} else {
+  if ($user['role'] == 2 and !$user['posisi_ortu']) {
+    include 'form_posisi_ortu.php'; // posisi ortu belum jelas
   } else {
-    $unclaim_points = "
-      <h2 class='tengah f20 pt4 mt4 border-top'>✅ Claimed Last Kuis</h2>
-      <p class=f14>Claimed Kuis tidak dapat dihapus karena poinnya sudah ditambahkan ke Learning Point</p>
-      <form method=post>
-        <table id=tb-hasil-quiz>
-          <thead>
-            <tr>
-              <th>Tanggal</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            $tr_last_kuis
-          </tbody>
-        </table>
-      </form>
-    ";
+    include 'fitur_khusus.php'; // fitur khusus ortu, guru, dll
+  }
+};
+// $whatsapp_info = $user['whatsapp_status'] ? '' : 'Whatsapp Anda belum terverifikasi';
+// jsurl('?verifikasi_whatsapp');
+
+# ============================================================
+# POSISI ORANG TUA
+# ============================================================
+if ($user['role'] >= 2) {
+  $rposisi_ortu = [
+    '1' => 'Ayah',
+    '2' => 'Ibu',
+    '3' => 'Wali'
+  ];
+  $info_sub_role = '';
+  if ($user['role'] == 2) {
+    $info_sub_role = $user['posisi_ortu'] ? '(' . $rposisi_ortu[$user['posisi_ortu']] . ')' : '';
   }
 }
 
-$lp_show = number_format($lp);
+
+$history = $_GET['history'] ?? null;
+$my_paket_kuis = '';
+$hitung_lp = '';
+
+if (!$history) {
+  # ============================================================
+  # HITUNG LP
+  # ============================================================
+  include 'hitung-lp.php';
+
+  $limit = 'LIMIT 1';
+  $judul = "
+    <h1>Dashboard</h1>
+    <p>Selamat Datang $user[nama] 👐</p>
+    <div class='f12 mb2'>Anda login sebagai $user[sebagai] $info_sub_role</div>
+  ";
+  $claimed_title = "
+    <h2 class='tengah f20 pt4 mt4 border-top'>✅ Claimed Last Kuis</h2>
+    <p class=f14>Claimed Kuis tidak dapat dihapus karena poinnya sudah ditambahkan ke Learning Point</p>
+  ";
+  $bottom_links = "
+    <div class='pt2 tengah' style='display:grid; grid-template-columns: 50% 50%'>
+      <a href=?dashboard&history=1><h2 class='f18 hover'>⏲️ History Kuis</h2></a>
+      <h2 class='f18 hover' id=play-again>▶️ Play Again</h2>
+    </div>
+  ";
+} else {
+  # ============================================================
+  # HISTORY IS ON
+  # ============================================================
+  $limit = 'LIMIT 1000';
+  $judul = "
+    <h2>⏲️ History Kuis</h2>
+    <p class=f14>Kuis-kuis yang pernah kamu jawab dan sudah Claim Point.</p>
+  ";
+  $claimed_title = '';
+  $bottom_links = "<a class='btn btn-secondary mt3' href=?dashboard>Back to Dashboard</a>";
+}
+
+$tr_unclaim = '';
+include 'my_paket_kuis.php';
+
+
 
 echo "
+  $judul
+  $whatsapp_info
+  $fitur_khusus
   <div id=main-dashboard>
-    <h2 class='tengah f20 pt4 mt4 border-top'>Learning Points</h2>
-    <div class='score-box'>
-      💲<strong id=nilai>$lp_show</strong> LP
-    </div>
-    <div class='f14 mt2 hover btn-aksi' id=cairkan--toggle>Cairkan Points 👉</div>
-    <div class=hideit id=cairkan>
-      <div class='wadah kiri mt3' >
-        <div class='mb1 tengah'>Hi Learners!! 😇</div>
-        Learning Points dapat dicairkan menjadi Rupiah. Learning Points bisa kamu kumpulkan dari hasil menjawab Quiz. Prasyarat pencairan adalah:
-        <ul class='pl4 f14'>
-          <li>Saldo mencukupi ✅</li>
-          <li>
-            <span class='hover btn-aksi' id=span1--toggle>My Profile 100% 👉</span> 
-            <span class=hideit id=span1>lengkapi foto, biodata, whatsapp tervalidasi Admin.</span>
-          </li>
-          <li>
-            <span class='hover btn-aksi' id=span2--toggle>Approved by Akun Orangtua 👉 </span> 
-            <span class='hideit' id=span2>Yakni Orangtua kamu, guru kamu, atau siapa saja yang menjadi Wali Murid untuk akun kamu di SmartQgen, ajak mereka untuk gabung ya! 😄 </span> 
-          </li>
-        </ul>
-        So, lengkapi persyaratannya dahulu ya!!
-        <button class='btn btn-secondary w-100 mt2 btn-aksi' id=cairkan--toggle--close>Close</button>
-      </div>
-    </div>
-
-    $unclaim_points
-
+    $hitung_lp
+    $my_paket_kuis
   </div>
 
+  $bottom_links
   
-  <div class='pt2 tengah' style='display:grid; grid-template-columns: 50% 50%'>
-    <a href=?history_kuis><h2 class='f18 hover'>⏲️ History Kuis</h2></a>
-    <h2 class='f18 hover' id=play-again>▶️ Play Again</h2>
-  </div>
   <div class=hideit id=blok-play-again>
     $opsi_quiz
     <div class='mt2'><a href='?quiz-started' class='btn btn-primary w-100'> Start Quiz</a></div>
