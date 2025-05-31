@@ -1,6 +1,5 @@
 <link rel="stylesheet" href="assets/css/progress.css">
 <link rel="stylesheet" href="assets/css/quiz.css">
-<link rel="stylesheet" href="assets/css/hasil-quiz.css">
 <!-- <link rel="stylesheet" href="assets/css/bootstrap.min.css"> -->
 <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script> -->
 <script src="./assets/js/crypto-js.min.js"></script>
@@ -59,66 +58,72 @@ $link_logout = $username ? '&nbsp;' : "<a href='?logout' onclick='return confirm
 # HTML AWAL
 # ============================================================
 echo "
-  <form method=post id=form-quiz>
-    <h1 class=judul>Quiz Started</h1>
+  <div class='w-500'>
+    <form method=post id=form-quiz>
+      <h1 class=judul>Quiz Started</h1>
 
-    <div class=blok-timer-logout>
-      <div class='flex flex-between'>
-        <div class=blok-timer>
-          <div class='item-timer' id=mnt>00</div>
-          <div class='item-timer'>:</div>
-          <div class='item-timer' id=dtk>00</div>
-        </div>
-        <div>
-          $link_logout
+      <div class=blok-timer-logout>
+        <div class='flex flex-between'>
+          <div class=blok-timer>
+            <div class='item-timer' id=mnt>00</div>
+            <div class='item-timer'>:</div>
+            <div class='item-timer' id=dtk>00</div>
+          </div>
+          <div>
+            $link_logout
+          </div>
         </div>
       </div>
-    </div>
 
 
-    
-    <div class=konten-soal>
-      <div class=info-soal>
-        <div class=row-info-soal>
-          <div><b>Mapel</b>: <span id=mapel>mapel</span> - <span id=tingkat>tingkat</span></div>
-          <div class=right><b>Level</b>: <i>medium</i></div>
+      
+      <div class=konten-soal>
+        <div class=info-soal>
+          <div class=row-info-soal>
+            <div><b>Mapel</b>: <span id=mapel>mapel</span> - <span id=tingkat>tingkat</span></div>
+            <div class=right><b>Level</b>: <i>medium</i></div>
+          </div>
+          <div><b>Materi</b>: <span id=materi>materi</span></div>
         </div>
-        <div><b>Materi</b>: <span id=materi>materi</span></div>
+
+        <div class=blok-kalimat-soal>
+          <div id=kalimatSoal>kalimatSoal</div>
+          <div id=gambarSoal>gambarSoal</div>
+        </div>
+        
+        <div class=blok-opsi>
+          <div class='opsi' id=opsi1>opsi1</div>
+          <div class='opsi' id=opsi2>opsi2</div>
+          <div class='opsi' id=opsi3>opsi3</div>
+          <div class='opsi' id=opsi4>opsi4</div>
+        </div>
       </div>
 
-      <div class=blok-kalimat-soal>
-        <div id=kalimatSoal>kalimatSoal</div>
-        <div id=gambarSoal>gambarSoal</div>
+      <div class=blok-bawah>
+        <div class='blok-progress'>
+          <div class='f14 mb2 blok-nav-soal'>
+            $nav_soals
+          </div>
+          <div class='progress'>
+            <div id=progressBar class='progress-bar progress-bar-success progress-bar-animated' style='width:0%'></div>
+          </div>
+        </div>    
+
+        <div class='blok-btn-submit hideit'>
+          <span class='btn btn-primary w-100 btn-lg mb4' id=submit-btn>Submit</span>
+        </div>
+
+        <div class='blok-laporkan-soal'>
+          $laporkan_soal
+        </div>
       </div>
       
-      <div class=blok-opsi>
-        <div class='opsi' id=opsi1>opsi1</div>
-        <div class='opsi' id=opsi2>opsi2</div>
-        <div class='opsi' id=opsi3>opsi3</div>
-        <div class='opsi' id=opsi4>opsi4</div>
-      </div>
-    </div>
-
-    <div class=blok-bawah>
-      <div class='blok-progress'>
-        <div class='f14 mb2 blok-nav-soal'>
-          $nav_soals
-        </div>
-        <div class='progress'>
-          <div id=progressBar class='progress-bar progress-bar-success progress-bar-animated' style='width:0%'></div>
-        </div>
-      </div>    
-
-      <div class='blok-btn-submit hideit'>
-        <span class='btn btn-primary w-100 btn-lg mb4' id=submit-btn>Submit</span>
-      </div>
-
-      <div class='blok-laporkan-soal'>
-        $laporkan_soal
-      </div>
-    </div>
-    $hasil_quiz
-  </form>
+      
+    </form>
+    <form method=post id=form-hasil-quiz>
+      $hasil_quiz;
+    </form>
+  </div>
 ";
 
 

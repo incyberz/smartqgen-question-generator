@@ -1,4 +1,3 @@
-<link rel="stylesheet" href="./assets/css/hasil-quiz.css">
 <style>
   .transparan:hover {
     background: none;
@@ -44,13 +43,13 @@ if (!$user['whatsapp_status']) {
 # ============================================================
 # POSISI ORANG TUA
 # ============================================================
+$info_sub_role = '';
 if ($user['role'] >= 2) {
   $rposisi_ortu = [
     '1' => 'Ayah',
     '2' => 'Ibu',
     '3' => 'Wali'
   ];
-  $info_sub_role = '';
   if ($user['role'] == 2) {
     $info_sub_role = $user['posisi_ortu'] ? '(' . $rposisi_ortu[$user['posisi_ortu']] . ')' : '';
   }
@@ -99,22 +98,34 @@ if (!$history) {
 $tr_unclaim = '';
 include 'my_paket_kuis.php';
 
+$hideit = '';
+$info_as_ortu = '';
+if ($user['role'] >= 2) {
+  $hideit = 'hideit';
+  $info_as_ortu = "<div class='tengah f20 pt4 mt4 border-top yellow btn-aksi hover' id=tampilan-pelajar--toggle>Lihat Tampilan as Pelajar</div>";
+}
 
 
 echo "
-  $judul
-  $whatsapp_info
-  $fitur_khusus
-  <div id=main-dashboard>
-    $hitung_lp
-    $my_paket_kuis
-  </div>
+  <div style='max-width:800px;margin:auto;'>
+    $judul
+    $whatsapp_info
+    $fitur_khusus
+    $info_as_ortu
 
-  $bottom_links
-  
-  <div class=hideit id=blok-play-again>
-    $opsi_quiz
-    <div class='mt2'><a href='?quiz-started' class='btn btn-primary w-100'> Start Quiz</a></div>
+    <div id=tampilan-pelajar class=$hideit>
+      <div id=main-dashboard>
+        $hitung_lp
+        $my_paket_kuis
+      </div>
+
+      $bottom_links
+      
+      <div class=hideit id=blok-play-again>
+        $opsi_quiz
+        <div class='mt2'><a href='?quiz-started' class='btn btn-primary w-100'> Start Quiz</a></div>
+      </div>
+    </div>
   </div>
 ";
 ?>

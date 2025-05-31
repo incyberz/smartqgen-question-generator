@@ -58,7 +58,7 @@ if (isset($_POST['btn_submit'])) {
     color: #aaa;
     text-align: left;
     margin-top: 5px;
-    color: yellow;
+    color: brown;
   }
 
   .blok-sebagai {
@@ -78,7 +78,8 @@ if (isset($_POST['btn_submit'])) {
   .saya-sebagai {
     position: absolute;
     top: -20px;
-    background: #005;
+    background: #55f;
+    color: white;
     left: 50%;
     transform: translateX(-50%);
     padding: 5px 15px;
@@ -107,9 +108,14 @@ if (isset($_POST['btn_submit'])) {
     box-shadow: 0 0 15px white;
   }
 </style>
-<form method="post" style="max-width: 500px;">
+<form method="post" class='w-500'>
   <h3>Register</h3>
-  <p>Masukan data-data Anda yang valid agar dapat mencoba semua fitur SmartQGen</p>
+  <p>Masukan data kamu agar dapat menyimpan dan menukarkan poin belajar.</p>
+  <div class="mb3">
+    <label for="whatsapp" class="form-label">WhatsApp Aktif</label>
+    <input type="text" class="input-form" id="whatsapp" name=whatsapp placeholder="Masukkan No. WhatsApp" required minlength="11" maxlength="14" value="<?= $post_whatsapp ?>" autocomplete="off">
+    <div class="input-info input-info-info" id=whatsapp--info>Gunakanlah whatsapp aktif agar dapat melakukan verifikasi registrasi dan menerima info penting lainnya.</div>
+  </div>
   <div class="mb3">
     <label for="username" class="form-label">Username</label>
     <input type="text" class="input-form" id="username" name=username placeholder="Masukkan Username..." required minlength="3" maxlength="20" value="<?= $post_username ?>">
@@ -117,14 +123,9 @@ if (isset($_POST['btn_submit'])) {
     <div class="input-info input-info-info" id=username--info>*) tanpa special character <br>*) password default sama dengan username</div>
   </div>
   <div class="mb3">
-    <label for="nama" class="form-label">Nama</label>
+    <label for="nama" class="form-label">Nama Lengkap</label>
     <input type="text" class="input-form" id="nama" name=nama placeholder="Masukkan Nama..." required minlength="3" maxlength="30" value="<?= $post_nama ?>">
     <div class="input-info input-info-info" id=nama--info>*) a-z only</div>
-  </div>
-  <div class="mb3">
-    <label for="whatsapp" class="form-label">WhatsApp</label>
-    <input type="text" class="input-form" id="whatsapp" name=whatsapp placeholder="Masukkan No. WhatsApp" required minlength="11" maxlength="14" value="<?= $post_whatsapp ?>" autocomplete="off">
-    <div class="input-info input-info-info" id=whatsapp--info>Gunakanlah whatsapp aktif agar dapat melakukan verifikasi registrasi dan menerima info penting lainnya.</div>
   </div>
   <div class="mb3">
     <div class="blok-sebagai">

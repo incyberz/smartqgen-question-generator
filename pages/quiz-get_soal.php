@@ -27,9 +27,9 @@ $s = "INSERT INTO tb_paket (id_pengunjung) VALUES ($id_pengunjung)";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
 # ============================================================
-# DAPATKAN ID PAKET
+# DAPATKAN DAN START SESSION ID PAKET
 # ============================================================
-$s = "SELECT id FROM tb_paket WHERE status is null";
+$s = "SELECT id FROM tb_paket WHERE status is null AND id_pengunjung=$id_pengunjung";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (!mysqli_num_rows($q)) die('Tidak dapat membuat Paket Baru.');
 $d = mysqli_fetch_assoc($q);

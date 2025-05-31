@@ -30,6 +30,10 @@
   margin: 20px 0;
 }
 
+#kalimatSoal{
+  color: rgb(10, 70, 10);
+}
+
 .gambar-soal {
   max-width: 100%;
   max-height: 400px;
@@ -54,7 +58,7 @@
 }
 
 .opsi-selected {
-  background: linear-gradient(#aa0, #330);
+  background: linear-gradient(rgb(29, 172, 43), rgb(3, 63, 1));
   border: solid 2px yellow;
   color: white;
   font-weight: 600;
@@ -119,9 +123,13 @@
 }
 
 .blok-bawah {
-  position: absolute;
+  position: fixed;
+  left: 0;
+  right: 0;
   bottom: 0;
-  width: 100%;
+  padding: 15px;
+  padding-bottom: 20px;
+  /* width: 100%; */
 }
 
 .blok-laporkan-soal {

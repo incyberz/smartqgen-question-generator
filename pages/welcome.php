@@ -1,15 +1,3 @@
-<style>
-  .form-welcome {
-    position: relative;
-    height: 100%;
-  }
-
-  .blok-bawah {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-  }
-</style>
 <?php
 # ============================================================
 # PROCESS
@@ -68,11 +56,12 @@ if ($id_pengunjung) {
   </script>
 
   <form method="POST" class=form-welcome>
-    <h1>Selamat Datang di <span style="color:#00bcd4;">SmartQGen</span></h1>
-    <p class="mb4">Soal Dinamis, Evaluasi Otomatis!</p>
+    <h1 class="hideit">Selamat Datang di JajanSoal! Dengan Menjawab Soal Kuis kamu akan dapat Uang Jajan.</h1>
 
-    <div class="tengah blok-logo">
-      <img src="assets/img/logo.png" alt="logo" class="logo">
+    <div class="tengah blok-welcome-logo">
+      <div class="f24 orange bold mb4">Selamat Datang di </div>
+      <img src="assets/img/hero.webp" alt="jajansoal-logo" class="logo">
+      <p class="mb4 orange mt3">Jawab Soal dapat Uang Jajan</p>
     </div>
 
     <div class='blok-opsies-and-login hideit'>
@@ -103,12 +92,12 @@ if ($id_pengunjung) {
     </div>
 
 
-    <div class="blok-bawah">
+    <div class="welcome-blok-bawah">
       <input class="mt3 f22 tengah proper mb3" type="text" name="nama" id="nama" required placeholder="Nama kamu..." autocomplete="off" minlength="3" maxlength="20">
       <span class="btn btn-secondary" id=span-opsi>
         ⚙️ Opsi
       </span>
-      <button type="submit" name=btn_start_quiz><span class="f18">🚀 Start Quiz</span></button>
+      <button type="submit" name=btn_start_quiz class="btn btn-primary"><span class="f18">🚀 Start Quiz</span></button>
     </div>
   </form>
 
@@ -154,7 +143,7 @@ if ($id_pengunjung) {
 
       $("#span-opsi").click(function() {
         $(".blok-opsies-and-login").slideToggle();
-        $(".blok-logo").slideToggle();
+        $(".blok-welcome-logo").slideToggle();
       });
 
       $("#show-login").click(function() {

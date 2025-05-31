@@ -41,6 +41,7 @@ if ($username) {
 $pengunjung = [];
 $user = [];
 include 'conn.php';
+include 'includes/AUTO_CLEAN_DB.php';
 include 'pages/user.php';
 $username = $pengunjung['username'] ?? null;
 $nama_pengunjung = $pengunjung['nama'] ?? null;
@@ -57,25 +58,26 @@ $nama_user = $user['nama'] ?? null;
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SmartQGen - Soal Dinamis, Evaluasi Otomatis</title>
-  <link rel="stylesheet" href="assets/css/dark.css">
-  <link rel="stylesheet" href="assets/css/btn.css">
-  <link rel="stylesheet" href="assets/css/btn-outlined.css">
 
   <?php
   # ============================================================
   # INCLUDES
   # ============================================================
   include 'includes/alert.php';
-  include 'includes/insho_styles.php';
+  // include 'includes/insho_styles.php';
   include 'includes/img_icon.php';
   include 'includes/jsurl.php';
   include 'includes/set_h2.php';
-  include 'includes/only.php';
   include 'includes/akses.php';
+  // include 'includes/only.php'; // sudah diwakili oleh akses.php
 
   $img_logout = img_icon('logout');
 
   ?>
+  <link rel="stylesheet" href="assets/css/btn.css">
+  <link rel="stylesheet" href="assets/css/btn-outlined.css">
+  <link rel="stylesheet" href="assets/css/insho-styles.css">
+  <link rel="stylesheet" href="assets/css/ceria.css">
   <script src="assets/js/jquery.js"></script>
 </head>
 
@@ -86,6 +88,13 @@ $nama_user = $user['nama'] ?? null;
     <?php include "pages/$param.php"; ?>
   </div>
   <?php include 'includes/script_btn_aksi.php'; ?>
+  <script>
+    $(function() {
+      $('.ondev').click(function() {
+        alert('Maaf, fitur ini sedang dalam pengembangan.');
+      })
+    })
+  </script>
 </body>
 
 </html>

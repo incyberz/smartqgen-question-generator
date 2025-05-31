@@ -2,7 +2,7 @@
 session_start();
 require_once '../conn.php';
 
-if (isset($_SESSION['lms_username'])) {
+if (isset($_SESSION['qgen_username'])) {
   echo 'Anda sedang login';
   exit;
 }

@@ -36,6 +36,7 @@ if ($id_pengunjung) {
       $_SESSION['qgen_username'] = $user['username'];
     }
   }
+  $user['role'] = $user['role'] ?? null;
   $_SESSION['qgen_role'] = $user['role'];
   $user['nama'] = $user['nama'] ?? '';
   $user['nama'] = ucwords(strtolower($user['nama']));

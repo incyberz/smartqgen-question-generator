@@ -7,12 +7,8 @@ $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $d = mysqli_fetch_assoc($q);
 $lp = $d['sum_poin'] + $user['basic_lp'];
 $lp_show = number_format($lp);
-$info_as_ortu = $user['role'] >= 2 ? "
-  <div class='tengah f20 pt4 mt4 border-top yellow'>Preview as Pelajar</div>
-  <p class='f12 yellow'>Tampilan dibawah adalah preview tampilan sebagai Pelajar</p>
-" : '';
+
 $hitung_lp = "
-  $info_as_ortu
   <h2 class='tengah f20 pt4 mt4 border-top'>Learning Points</h2>
   <div class='score-box'>
     💲<strong id=nilai>$lp_show</strong> LP
