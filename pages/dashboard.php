@@ -6,7 +6,7 @@
   }
 </style>
 <?php
-include 'dashboard-process.php';
+include 'user-process.php';
 include 'opsi_quiz.php';
 include "$dotdot/includes/hari_tanggal.php";
 
@@ -99,21 +99,22 @@ $tr_unclaim = '';
 include 'my_paket_kuis.php';
 
 $hideit = '';
+$class_ortu = '';
 $info_as_ortu = '';
 if ($user['role'] >= 2) {
+  $class_ortu = 'ortu';
   $hideit = 'hideit';
   $info_as_ortu = "<div class='tengah f20 pt4 mt4 border-top yellow btn-aksi hover' id=tampilan-pelajar--toggle>Lihat Tampilan as Pelajar</div>";
 }
 
 
 echo "
-  <div style='max-width:800px;margin:auto;'>
+  <div style='max-width:800px;margin:auto;' class='$class_ortu'>
     $judul
     $whatsapp_info
     $fitur_khusus
-    $info_as_ortu
 
-    <div id=tampilan-pelajar class=$hideit>
+    <div id=tampilan-pelajar class='$hideit pelajar'>
       <div id=main-dashboard>
         $hitung_lp
         $my_paket_kuis
@@ -126,6 +127,8 @@ echo "
         <div class='mt2'><a href='?quiz-started' class='btn btn-primary w-100'> Start Quiz</a></div>
       </div>
     </div>
+    $info_as_ortu
+
   </div>
 ";
 ?>

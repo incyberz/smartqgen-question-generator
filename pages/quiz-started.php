@@ -80,7 +80,7 @@ echo "
       <div class=konten-soal>
         <div class=info-soal>
           <div class=row-info-soal>
-            <div><b>Mapel</b>: <span id=mapel>mapel</span> - <span id=tingkat>tingkat</span></div>
+            <div><b>Mapel</b>: <span id=mapel>mapel</span> - <span id=jenjang>jenjang</span></div>
             <div class=right><b>Level</b>: <i>medium</i></div>
           </div>
           <div><b>Materi</b>: <span id=materi>materi</span></div>
@@ -205,7 +205,7 @@ echo "
     $('.konten-soal').fadeOut();
 
 
-    $('#tingkat').text(soalObj.tingkat);
+    $('#jenjang').text(soalObj.jenjang);
     $('#mapel').text(soalObj.mapel);
     $('#materi').text(soalObj.materi);
     $('#kalimatSoal').text(soalObj.kalimat_soal);

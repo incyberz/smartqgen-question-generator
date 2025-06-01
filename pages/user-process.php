@@ -1,8 +1,9 @@
 <?php
+if (!$username) stop('user process hanya untuk logged user');
 if (isset($_POST['btn_claim_poin'])) {
   $s = "UPDATE tb_jawaban SET archived=1 WHERE id_paket = $_POST[btn_claim_poin]";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-  $s = "UPDATE tb_paket SET status=100 WHERE id = $_POST[btn_claim_poin]";
+  $s = "UPDATE tb_paket_jawaban SET status=100 WHERE id = $_POST[btn_claim_poin]";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   jsurl();
 } elseif (isset($_POST['posisi_ortu'])) {
@@ -48,6 +49,25 @@ if (isset($_POST['btn_claim_poin'])) {
       jsurl();
     }
   }
+} elseif (isset($_POST['btn_simpan_konfigurasi'])) {
+  include 'config_default.php';
+
+  $s = "DESCRIBE tb_config";
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  $Desc = [];
+  while ($d = mysqli_fetch_assoc($q))  $Desc[$d['Field']] = $d;
+  $pairs = '';
+  $values = '';
+  foreach ($Desc as $k => $v) {
+    if ($k == 'ortu') continue;
+    $koma = $pairs ? ',' : '';
+    $value = $_POST[$k] == $config_default[$k]['value'] ? 'NULL' : intval($_POST[$k]);
+    $pairs .= "$koma$k=$value";
+  }
+
+  $s = "UPDATE tb_config SET $pairs WHERE ortu = '$username'";
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  jsurl();
 } elseif ($_POST) {
 
   echo '<pre>';

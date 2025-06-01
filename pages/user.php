@@ -5,6 +5,7 @@ if ($id_pengunjung) {
     b.sebagai,
     c.id as id_pengunjung,
     c.created_at,
+    (SELECT last_update FROM tb_tmp WHERE username=a.username) last_update_tmp, 
     (SELECT posisi_ortu FROM tb_ortu WHERE username=a.username) posisi_ortu, 
     (SELECT COUNT(1) FROM tb_kelas WHERE username=a.username) jumlah_kelas 
     FROM tb_user a 
@@ -15,6 +16,13 @@ if ($id_pengunjung) {
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
     $user = mysqli_fetch_assoc($q);
     $pengunjung = $user;
+
+    if (!$user['last_update_tmp']) {
+      # ============================================================
+      # AUTO-INSERT DATA TMP
+      # ============================================================
+      mysqli_query($cn, "INSERT INTO tb_tmp (username) VALUES ('$username')") or die(mysqli_error($cn));
+    }
   } else { // belum login | baru register
     $s = "SELECT *,
     (SELECT username FROM tb_user WHERE id_pengunjung=a.id) username 
@@ -36,8 +44,8 @@ if ($id_pengunjung) {
       $_SESSION['qgen_username'] = $user['username'];
     }
   }
-  $user['role'] = $user['role'] ?? null;
-  $_SESSION['qgen_role'] = $user['role'];
   $user['nama'] = $user['nama'] ?? '';
   $user['nama'] = ucwords(strtolower($user['nama']));
 }
+$user['role'] = $user['role'] ?? null;
+$_SESSION['qgen_role'] = $user['role'];

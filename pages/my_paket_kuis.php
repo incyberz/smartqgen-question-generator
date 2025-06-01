@@ -4,7 +4,7 @@
 # ===============================
 $s = "SELECT 
 a.* 
-FROM tb_paket a 
+FROM tb_paket_jawaban a 
 WHERE a.id_pengunjung = $id_pengunjung 
 -- AND status < 100 -- belum di claim 
 ORDER BY waktu_submit DESC
@@ -27,7 +27,7 @@ if (!mysqli_num_rows($q)) {
     # AUTO DELETE IF STATUS PAKET IS NULL
     # ============================================================
     if (!$d['status']) {
-      $s2 = "DELETE FROM tb_paket WHERE id=$d[id]";
+      $s2 = "DELETE FROM tb_paket_jawaban WHERE id=$d[id]";
       mysqli_query($cn, $s2) or die(mysqli_error($cn));
     }
 
@@ -46,7 +46,7 @@ if (!mysqli_num_rows($q)) {
             <div><b class='f14'>Nilai</b>: $d[nilai] ~ <i class='f12 abu'>$d[poin] LP</i></div>
           </td>
           <td >
-            <div>✅<i class='f12 putih'>Claimed</i></div>
+            <div>✅<i class='f12'>Claimed</i></div>
           </td>
         </tr>
       ";

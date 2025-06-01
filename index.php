@@ -43,6 +43,10 @@ $user = [];
 include 'conn.php';
 include 'includes/AUTO_CLEAN_DB.php';
 include 'pages/user.php';
+include 'pages/config_default.php';
+include 'pages/config.php';
+
+// include 'pages/role.php'; @user[sebagai]
 $username = $pengunjung['username'] ?? null;
 $nama_pengunjung = $pengunjung['nama'] ?? null;
 $nama_user = $user['nama'] ?? null;
@@ -69,9 +73,9 @@ $nama_user = $user['nama'] ?? null;
   include 'includes/jsurl.php';
   include 'includes/set_h2.php';
   include 'includes/akses.php';
+  include 'includes/tanggal.php';
   // include 'includes/only.php'; // sudah diwakili oleh akses.php
 
-  $img_logout = img_icon('logout');
 
   ?>
   <link rel="stylesheet" href="assets/css/btn.css">
@@ -84,7 +88,8 @@ $nama_user = $user['nama'] ?? null;
 <body>
   <div class="container">
     <span id="id_pengunjung" class="hideit"><?= $id_pengunjung ?></span>
-    <?php if ($username) include 'pages/btn_logout.php'; ?>
+    <?php include 'pages/btn_logout.php'; ?>
+    <?php include 'pages/btn_home.php'; ?>
     <?php include "pages/$param.php"; ?>
   </div>
   <?php include 'includes/script_btn_aksi.php'; ?>

@@ -5,11 +5,12 @@
 </style>
 <?php
 include 'quiz-process.php';
+$img_logout = img_icon('logout');
 
 $awal_rekap = $today;
 $sql = "SELECT *,
 (
-  SELECT COUNT(1) FROM tb_paket WHERE id_pengunjung=a.id 
+  SELECT COUNT(1) FROM tb_paket_jawaban WHERE id_pengunjung=a.id 
   AND status is not null -- paket sudah dijawab
   ) punya_paket, 
 (
@@ -55,7 +56,7 @@ while ($d = mysqli_fetch_assoc($q)) {
   b.waktu_submit,
   c.lp 
   FROM tb_jawaban a 
-  JOIN tb_paket b ON a.id_paket=b.id 
+  JOIN tb_paket_jawaban b ON a.id_paket=b.id 
   JOIN tb_soal c ON a.id_soal=c.id 
   WHERE 1 -- a.id_paket=$id_paket -- milik current pengunjung 
   AND b.id_pengunjung = $d[id] 
@@ -83,18 +84,18 @@ while ($d = mysqli_fetch_assoc($q)) {
     # ============================================================
     # AMBIL POIN DAN NILAI DARI DATA PAKET
     # ============================================================
-    $s2 = "SELECT * FROM tb_paket WHERE id_pengunjung=$d[id]";
+    $s2 = "SELECT * FROM tb_paket_jawaban WHERE id_pengunjung=$d[id]";
     $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
     $sum_nilai = 0;
     $sum_poin = 0;
-    $jumlah_paket = mysqli_num_rows($q2);
+    $play_count = mysqli_num_rows($q2);
 
     while ($d2 = mysqli_fetch_assoc($q2)) {
       $sum_nilai += $d2['nilai'];
       $sum_poin += $d2['poin'];
     }
     $poin = $sum_poin;
-    $nilai = round($sum_nilai / $jumlah_paket);
+    $nilai = round($sum_nilai / $play_count);
 
     if (!$d['username']) stop("invalid logic, harus punya username, id_pengunjung: $d[id]");
 
@@ -117,6 +118,7 @@ while ($d = mysqli_fetch_assoc($q)) {
   $rrank[$d['id']] = [
     'poin' => $poin,
     'nilai' => $nilai,
+    'play_count' => $play_count,
     'nama' => $d['nama'],
     'durasi_jawab' => $durasi_jawab,
     'average_icon' => $average_icon,
@@ -149,6 +151,17 @@ foreach ($rrank as $k => $d) {
   if ($id_pengunjung == $k) {
     $my_rank = $i;
     $my_data = 'my-data';
+    # ============================================================
+    # AUTO UPDATE TMP POIN
+    # ============================================================
+    if ($username) {
+      mysqli_query($cn, "UPDATE tb_tmp SET 
+        poin=$d[poin],
+        nilai=$d[nilai],
+        play_count=$d[play_count],
+        rank=$my_rank 
+      WHERE username='$username'") or die(mysqli_error($cn));
+    }
   }
   $medal = $medals[$i] ?? '';
   $tr .= "

@@ -41,7 +41,7 @@ FROM tb_jawaban a
 JOIN tb_soal b ON a.id_soal = b.id 
 JOIN tb_materi c ON b.id_materi = c.id 
 JOIN tb_mapel d ON c.id_mapel = d.id 
-JOIN tb_paket e ON a.id_paket = e.id 
+JOIN tb_paket_jawaban e ON a.id_paket = e.id 
 WHERE e.id = $id_paket 
 AND a.archived is null
 ";
@@ -93,7 +93,7 @@ $poin = $flat_reward * (((100 / $total) * $benar) / 100);
 # ============================================================
 # UPDATE PAKET
 # ============================================================
-$s = "UPDATE tb_paket SET 
+$s = "UPDATE tb_paket_jawaban SET 
   status = 1, -- terjawab
   waktu_submit = CURRENT_TIMESTAMP,
   nilai = $nilai,

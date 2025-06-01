@@ -1,12 +1,12 @@
 <?php
-akses('manage_anak');
+akses('manage_kelas');
 $get_id_kelas = $_GET['id_kelas'] ?? '';
 
 $pesan_error = '';
 $post_username_anak = $_POST['username_anak'] ?? '';
 $post_tanggal_lahir = $_POST['tanggal_lahir'] ?? '';
 
-include 'dashboard-process.php';
+include 'user-process.php';
 if (!$user['jumlah_kelas']) {
   set_h2('Tambah Kelas', 'Anda belum punya kelas, silahkan buat dahulu untuk mewadahi kegiatan belajar!');
 ?>
@@ -36,7 +36,7 @@ if (!$user['jumlah_kelas']) {
   if (mysqli_num_rows($q) > 1) {
     $links = '';
     while ($d = mysqli_fetch_assoc($q)) {
-      $links .= "<div class='border-top mt2 pt2'><a href=?manage_anak&id_kelas=$d[id]>👉 Manage Kelas $d[nama_kelas]</a></div>";
+      $links .= "<div class='border-top mt2 pt2'><a href=?manage_kelas&id_kelas=$d[id]>👉 Manage Kelas $d[nama_kelas]</a></div>";
     }
     echo "
       <div class='ortu w-500 left'>

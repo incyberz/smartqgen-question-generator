@@ -7,7 +7,7 @@
   }
 
   .label-mapel,
-  .label-tingkat,
+  .label-jenjang,
   .label-jumlah {
     display: block;
   }
@@ -17,16 +17,16 @@
   }
 
   .label-mapel-active,
-  .label-tingkat-active,
+  .label-jenjang-active,
   .label-jumlah-active {
     background-color: #0d6efd;
     color: white;
   }
 </style>
 <?php
-$tingkat = [
+$jenjang = [
   'SD' => [
-    'active' => 'label-tingkat-active',
+    'active' => 'label-jenjang-active',
     'bg' => 'success',
   ],
   'SMP' => [
@@ -43,11 +43,11 @@ $tingkat = [
   ],
 ];
 
-$opsi_tingkat = '';
-foreach ($tingkat as $k => $v) {
-  $opsi_tingkat .= "
-    <label class='label-tingkat $v[active] btn-outlined btn-outlined-$v[bg] '>
-      <input type='radio' name='tingkat' id='tingkat--$k' value='$k' > $k
+$opsi_jenjang = '';
+foreach ($jenjang as $k => $v) {
+  $opsi_jenjang .= "
+    <label class='label-jenjang $v[active] btn-outlined btn-outlined-$v[bg] '>
+      <input type='radio' name='jenjang' id='jenjang--$k' value='$k' > $k
     </label>
     ";
 }
@@ -79,8 +79,8 @@ for ($i = 1; $i <= 5; $i++) {
 }
 
 $opsi_quiz = "
-  <div class='blok-opsi blok-opsi-tingkat mb2 border-top mt4 pt4'>
-    $opsi_tingkat
+  <div class='blok-opsi blok-opsi-jenjang mb2 border-top mt4 pt4'>
+    $opsi_jenjang
   </div>
   <div class='blok-opsi blok-opsi-mapel pt4 mb2'>
     $opsi_mapel
@@ -93,9 +93,9 @@ $opsi_quiz = "
 ?>
 <script>
   $(function() {
-    $(".label-tingkat").click(function() {
-      $(".label-tingkat").removeClass('label-tingkat-active');
-      $(this).addClass('label-tingkat-active');
+    $(".label-jenjang").click(function() {
+      $(".label-jenjang").removeClass('label-jenjang-active');
+      $(this).addClass('label-jenjang-active');
     });
     $(".label-mapel").click(function() {
       $(".label-mapel").removeClass('label-mapel-active');
