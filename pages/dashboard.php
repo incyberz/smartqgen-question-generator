@@ -57,7 +57,7 @@ if ($user['role'] >= 2) {
 
 
 $history = $_GET['history'] ?? null;
-$my_paket_kuis = '';
+$unclaim_poin = '';
 $hitung_lp = '';
 
 if (!$history) {
@@ -96,7 +96,7 @@ if (!$history) {
 }
 
 $tr_unclaim = '';
-include 'my_paket_kuis.php';
+include 'unclaim_poin.php';
 
 $hideit = '';
 $class_ortu = '';
@@ -117,7 +117,7 @@ echo "
     <div id=tampilan-pelajar class='$hideit pelajar'>
       <div id=main-dashboard>
         $hitung_lp
-        $my_paket_kuis
+        $unclaim_poin
       </div>
 
       $bottom_links

@@ -15,16 +15,18 @@
 # ============================================================
 $info_peserta_kelas = '<div class="wadah gradasi-kuning abu miring ">Anda belum punya Anak Didik</div>';
 include 'info_peserta_kelas.php';
+include 'info_paket_soal.php';
 
 # ============================================================
 # REQUEST PENCAIRAN
 # ============================================================
 $jumlah_request_pencairan = 0;
-$info_request_pencairan = '';
 include 'request_pencairan.php';
-if ($jumlah_request_pencairan) {
-  $info_request_pencairan = "<a href=?manage_trx class='btn btn-danger w-100'>Ada $jumlah_request_pencairan Request Pencairan</a>";
-}
+$info_request_pencairan = $jumlah_request_pencairan ? "
+  <a href=?manage_trx class='btn btn-danger w-100 mb1 mt1'>Ada <span class=f24>$jumlah_request_pencairan</span> Request Pencairan</a>
+" : "
+  <a href=?manage_trx class='btn w-100 mb1 btn-warning mt1'>💰 Manage Saldo dan Trx</a>
+";
 
 
 
@@ -42,9 +44,7 @@ if ($jumlah_request_pencairan) {
 # ============================================================
 # GET TMP SALDO
 # ============================================================
-$s = "SELECT * FROM tb_tmp WHERE username = '$username'";
-$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-$tmp = mysqli_fetch_assoc($q);
+include 'tmp_data.php';
 $selisih = strtotime('now') - strtotime($tmp['last_update']);
 if ($selisih > 300) {
   # ============================================================
@@ -89,46 +89,11 @@ $fitur = "
   <p class='abu f12 mt1 mb3'>Saldo ini sebagai Info Reward Virtual Anda. Berikan reward jika anak mengajukan pencairan Learning Point</p>
 
   $info_request_pencairan
-  <a href=?manage_trx class='btn w-100 mb1 btn-warning mt1'>💰 Manage Saldo dan Trx</a>
   <a href=?konfigurasi_pencairan class='btn w-100 mb1 btn-success'>💸 Konfigurasi Pencairan</a>
 
-  <h2 class='tengah f20 pt4 mt4 border-top'>Paket Soal (LKS)</h2>
-  <table class=table>
-    <thead>
-      <th>Paket Soal anak Anda:</th>
-    </thead>
-    <tr>
-      <td>
-        <div class=flexy>
-          <div>1.</div>
-          <div>
-            Free Soal SD (Random) ZZZ
-            <div class='f12 abu'>valid until: <i>unlimitted</i></div> 
-          </div>
-        </div>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <div class=flexy>
-          <div>2.</div>
-          <div>
-            Free Soal Matematika SMP ZZZ
-            <div class='f12 abu'>valid until: <i>unlimitted</i></div> 
-          </div>
-        </div>
-      </td>
-    </tr>
-  </table>
-
-  <p class='abu f12 mt1'>Anda bisa membeli Paket Soal lainnya pada Katalog LKS</p>
-  <a href=?manage_trx class='btn w-100 mb1 btn-primary mt3'>📚 Beli Paket Soal</a>
-
-
-  <div class=''>
-    $info_peserta_kelas
-  </div>
-
-
+  $info_peserta_kelas
   <a href=?manage_kelas class='btn w-100 mb1 btn-success' >👨‍👩‍👧‍👦 Manajemen Kelas</a>
+
+  $info_paket_soal
+  <a href=?manage_trx class='btn w-100 mb1 btn-primary mt3'>📚 Beli Paket Soal (LKS)</a>
 ";

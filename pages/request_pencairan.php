@@ -12,7 +12,7 @@ ORDER BY a.tanggal ASC
 ";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $jumlah_request_pencairan = mysqli_num_rows($q);
-
+$request_pencairan = '';
 if ($param == 'manage_trx') {
 
   $tr_pencairan = '';
@@ -60,18 +60,14 @@ if ($param == 'manage_trx') {
       ";
       $no--;
     }
+    $request_pencairan = "
+    <div class='border-bottom pb4'>
+      <h2 class='tengah f20 pt4 mt4 darkred'>👆Request Pencairan</h2>
+      <b>Saldo</b>: $format_saldo
+      <table class=table>
+        $tr_pencairan
+      </table>
+    </div>
+    ";
   }
-
-
-
-
-  $request_pencairan = "
-  <div class='border-bottom pb4'>
-    <h2 class='tengah f20 pt4 mt4 darkred'>👆Request Pencairan</h2>
-    <b>Saldo</b>: $format_saldo
-    <table class=table>
-      $tr_pencairan
-    </table>
-  </div>
-  ";
 }

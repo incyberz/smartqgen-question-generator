@@ -7,6 +7,7 @@ session_start();
 # GLOBAL VARS
 # ============================================================
 $today = date('Y-m-d');
+$default_src = 'assets/img/pelajar.png';
 
 # ============================================================
 # SESSION
@@ -75,6 +76,7 @@ $nama_user = $user['nama'] ?? null;
   include 'includes/akses.php';
   include 'includes/tanggal.php';
   // include 'includes/only.php'; // sudah diwakili oleh akses.php
+  $img_logout = img_icon('logout');
 
 
   ?>

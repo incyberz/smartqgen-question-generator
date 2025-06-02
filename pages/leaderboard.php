@@ -5,7 +5,6 @@
 </style>
 <?php
 include 'quiz-process.php';
-$img_logout = img_icon('logout');
 
 $awal_rekap = $today;
 $sql = "SELECT *,

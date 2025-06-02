@@ -1,5 +1,5 @@
 <?php
-if ($param != '' and $param != 'dashboard' and $param != 'quiz-started') {
+if ($param != '' and $param != 'dashboard' and $param != 'welcome' and $param != 'quiz-started') {
   echo "
     <style>
       .btn-home {

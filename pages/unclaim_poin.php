@@ -69,7 +69,7 @@ if (!mysqli_num_rows($q)) {
     }
   }
   if ($tr_unclaim) {
-    $my_paket_kuis = "
+    $unclaim_poin = "
       <h2 class='tengah f20 pt4 mt4 border-top'>🏅 Unclaim Points</h2>
       <p>Jika kamu claim maka Total Poin kamu bertambah dan data masuk ke History Kuis</p>
       <form method=post>
@@ -87,7 +87,7 @@ if (!mysqli_num_rows($q)) {
       </form>
     ";
   } else {
-    $my_paket_kuis = "
+    $unclaim_poin = "
       $claimed_title
       <form method=post>
         <table id=tb-hasil-quiz>

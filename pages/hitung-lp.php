@@ -19,7 +19,7 @@ if (!$user['last_update_tmp'] || (strtotime('now') - strtotime($user['last_updat
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   $d = mysqli_fetch_assoc($q);
 }
-$lp = $d['sum_poin'] + $user['basic_lp'];
+$lp = $d['sum_poin']; // + $user['basic_lp'];
 $lp_show = number_format($lp);
 
 $hitung_lp = "

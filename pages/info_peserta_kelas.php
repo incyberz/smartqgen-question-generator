@@ -1,7 +1,26 @@
+<style>
+  .row-peserta {
+    position: relative;
+  }
+
+  .rank {
+    font-size: 40px;
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    /* background: white; */
+    /* border-radius: 50%; */
+    height: 40px;
+    width: 40px;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* box-shadow: 0 0 3px gray; */
+  }
+</style>
 <?php
 if ($user['jumlah_kelas']) {
-  $default_src = 'assets/img/pelajar.png';
-
   $s = "SELECT * FROM tb_kelas a WHERE username='$username'";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   $tr_kelas = '';
@@ -27,8 +46,15 @@ if ($user['jumlah_kelas']) {
     if (mysqli_num_rows($q2)) {
       $pesertas = '';
 
+      $medals = [
+        1 => '🥇',
+        2 => '🥈',
+        3 => '🥉',
+      ];
 
+      $i = 0;
       while ($d2 = mysqli_fetch_assoc($q2)) {
+        $i++;
         $poin = $d2['tmp_poin'];
         $poin_show = number_format($poin);
         $play_count = $d2['tmp_play_count'] ?? 0;
@@ -36,11 +62,22 @@ if ($user['jumlah_kelas']) {
         $nilai_show = $play_count > 1 ? "$nilai x $play_count" : $nilai;
         $user_src = "assets/img/user/$d2[image]";
         $src = ($d2['image'] and file_exists($user_src)) ? $user_src : $default_src;
-        $src = $user_src;
 
         $nama_peserta = ucwords(strtolower($d2['nama_peserta']));
+
+        $div_rank = '';
+        if ($i <= 3) {
+          $medal = $medals[$i];
+          $div_rank = "
+            <div class=rank>
+              <div>$medal</div>
+            </div>          
+          ";
+        }
+
         $pesertas .= "
           <div class='bordered mb3 br5 p2 tengah gradasi-toska row-peserta'>
+            $div_rank
             <a href=?detail_peserta&username=$d2[username]>
               <div><img src=$src class=foto_profil></div>
               <div>$nama_peserta</div>

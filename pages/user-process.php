@@ -68,6 +68,58 @@ if (isset($_POST['btn_claim_poin'])) {
   $s = "UPDATE tb_config SET $pairs WHERE ortu = '$username'";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   jsurl();
+} elseif (isset($_POST['nominal-top-up'])) {
+  $nominal = intval($_POST['nominal-top-up']);
+  if ($nominal) {
+    $s = "INSERT INTO tb_trx (
+      username,
+      jenis,
+      nominal,
+      ortu
+    ) VALUES (
+      '$username',
+      'd',
+      '$nominal',
+      '$username'
+    )";
+    $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+
+    $s = "UPDATE tb_tmp SET saldo = saldo + $nominal WHERE username = '$username'";
+    $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  }
+  jsurl();
+} elseif (isset($_POST['btn_batal_topup'])) {
+  $id = intval($_POST['btn_batal_topup']);
+  if ($id) {
+    $s = "SELECT nominal FROM tb_trx WHERE id=$id";
+    $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+    $d = mysqli_fetch_assoc($q);
+    mysqli_query($cn, "DELETE FROM tb_trx WHERE id=$id") or die(mysqli_error($cn));
+    mysqli_query($cn, "UPDATE tb_tmp SET saldo = saldo - $d[nominal] WHERE username = '$username'") or die(mysqli_error($cn));
+  }
+  jsurl();
+} elseif (isset($_POST['btn_approve_pencairan'])) {
+  $id = intval($_POST['btn_approve_pencairan']);
+  if ($id) {
+    $s = "SELECT * FROM tb_trx WHERE id=$id";
+    $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+    $trx = mysqli_fetch_assoc($q);
+
+    # ============================================================
+    # RECHECK SALDO ORTU
+    # ============================================================
+    $csaldo = 0;
+    include 'history_trx.php'; // update csaldo pada history
+
+    if ($csaldo < $trx['nominal']) {
+      alert("Maaf, saldo tidak mencukupi.<hr class='mt3 mb3'>Saldo: $csaldo, request Rp $trx[nominal]");
+    } else {
+      alert("Processing Pencairan...", 'info');
+      mysqli_query($cn, "UPDATE tb_trx SET approv_date = NOW() WHERE id=$id") or die(mysqli_error($cn));
+      mysqli_query($cn, "UPDATE tb_tmp SET saldo = saldo - $trx[nominal] WHERE username = '$username'") or die(mysqli_error($cn));
+    }
+  }
+  jsurl('?', 3000);
 } elseif ($_POST) {
 
   echo '<pre>';
