@@ -1,24 +1,18 @@
 <?php
+// aborted code
+/*
 if (!$user['last_update_tmp'] || (strtotime('now') - strtotime($user['last_update_tmp']) > 300)) {
   # ============================================================
   # UPDATE TMP POIN
   # ============================================================
-  $s = "SELECT SUM(a.poin) as sum_poin FROM tb_paket_jawaban a 
-  WHERE a.id_pengunjung = $id_pengunjung 
-  AND status = 100 -- sudah di claim 
-  ";
-  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-  $d = mysqli_fetch_assoc($q);
-  $s = "UPDATE tb_tmp SET poin = $d[sum_poin], last_update = NOW() WHERE username='$username'";
-  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-} else {
-  # ============================================================
-  # GET POIN FROM TMP
-  # ============================================================
-  $s = "SELECT *,poin as sum_poin FROM tb_tmp WHERE username='$username'";
-  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-  $d = mysqli_fetch_assoc($q);
+  include 'update_tmp.php';
 }
+# ============================================================
+# GET POIN FROM TMP
+# ============================================================
+$s = "SELECT *,poin as sum_poin FROM tb_tmp WHERE username='$username'";
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+$d = mysqli_fetch_assoc($q);
 $lp = $d['sum_poin']; // + $user['basic_lp'];
 $lp_show = number_format($lp);
 
@@ -48,3 +42,4 @@ $hitung_lp = "
     </div>
   </div>
 ";
+*/

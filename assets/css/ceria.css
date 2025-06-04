@@ -126,6 +126,12 @@ th, td {
   background-color: #fffde7;
 }
 
+.row-saya td {
+  border: 2px solid #ffc400;
+  color: blue;
+  background: linear-gradient(#e6e5e2,rgb(152, 255, 152));
+}
+
 /* Answer Options */
 .option {
   margin: 10px 0;
@@ -230,9 +236,7 @@ th, td {
   padding: 20px;
   border-radius: 10px;
   text-align: center;
-  font-size: 24px;
   color: #f57c00;
-  font-weight: bold;
   border: 2px dashed #ffb300;
 }
 

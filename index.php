@@ -43,6 +43,7 @@ $pengunjung = [];
 $user = [];
 include 'conn.php';
 include 'includes/AUTO_CLEAN_DB.php';
+include 'includes/qgen_functions.php';
 include 'pages/user.php';
 include 'pages/config_default.php';
 include 'pages/config.php';

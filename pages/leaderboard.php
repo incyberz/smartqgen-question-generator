@@ -12,10 +12,8 @@ $sql = "SELECT *,
   SELECT COUNT(1) FROM tb_paket_jawaban WHERE id_pengunjung=a.id 
   AND status is not null -- paket sudah dijawab
   ) punya_paket, 
-(
-  SELECT username FROM tb_user WHERE id_pengunjung=a.id 
-  AND 1 -- role = 1 -- ortu masuk leaderboard
-  ) username 
+(SELECT username FROM tb_user WHERE id_pengunjung=a.id) username, 
+(SELECT role FROM tb_user WHERE id_pengunjung=a.id) role 
 FROM tb_pengunjung a WHERE ";
 $s = "$sql created_at >= '$awal_rekap'";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
@@ -30,10 +28,14 @@ if ($num_rows < 5) {
     $last_month = date('Y-m-d', strtotime('-30 day', strtotime($today)));
     $awal_rekap = $last_month;
     $s = "$sql created_at >= '$awal_rekap'";
-    $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-    $num_rows = mysqli_num_rows($q);
   }
 }
+$s = "$sql 1"; // ZZZ DEBUG SHOW ALL
+// echo '<pre>';
+// print_r($s);
+// echo '</pre>';
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+$num_rows = mysqli_num_rows($q);
 
 if (!$num_rows) stop('Tidak ada data pengunjung untuk leaderboard');
 
@@ -41,87 +43,98 @@ if (!$num_rows) stop('Tidak ada data pengunjung untuk leaderboard');
 # SUMMARY NILAI
 # ============================================================
 $rrank = [];
-$i = 0;
+$jumlah_player = 0;
 while ($d = mysqli_fetch_assoc($q)) {
-  $i++;
-  if (!$d['punya_paket']) continue; // 
+  if ((!$user['role'] || $user['role'] == 1) // skip ortu untuk pengunjung atau pelajar
+    and $d['username'] // untuk username ortu yang ini
+    and $d['role'] == 2 // skip role ortu
+  ) continue; // 
 
-  # ============================================================
-  # JAWABAN UNARCHIVED (PENGUNJUNG ONLY)
-  # ============================================================
-  $s2 = "SELECT a.*,
-  b.status, 
-  b.waktu_load, 
-  b.waktu_submit,
-  c.lp 
-  FROM tb_jawaban a 
-  JOIN tb_paket_jawaban b ON a.id_paket=b.id 
-  JOIN tb_soal c ON a.id_soal=c.id 
-  WHERE 1 -- a.id_paket=$id_paket -- milik current pengunjung 
-  AND b.id_pengunjung = $d[id] 
-  AND a.archived is null -- yang di archived ambil dari poin paket
-  ";
-  $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
-  $jumlah_soal_unarchived = mysqli_num_rows($q2);
-  $nilai = 0;
-  $benar = 0;
-  $durasi_jawab = 0;
-  if ($jumlah_soal_unarchived and !$d['username']) { // no username = pengunjung only
-    $flat_reward = 0;
-    while ($d2 = mysqli_fetch_assoc($q2)) {
-      if ($d2['jawaban_benar'] == $d2['jawaban']) {
-        $benar++;
-        $flat_reward += $d2['lp'];
-      }
-      $durasi_jawab = $d2['waktu_submit'] ? strtotime($d2['waktu_submit']) - strtotime($d2['waktu_load']) : 0;
-    }
-    $nilai = $benar * 100 / $jumlah_soal_unarchived;
-    $poin = $flat_reward * (((100 / $jumlah_soal_unarchived) * $benar) / 100);
-    $average_icon = '';
-    $user_icon = '🙂';
-  } else { // khusus user, abaikan data user yang sedang main (unarchived)
-    # ============================================================
-    # AMBIL POIN DAN NILAI DARI DATA PAKET
-    # ============================================================
-    $s2 = "SELECT * FROM tb_paket_jawaban WHERE id_pengunjung=$d[id]";
-    $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
-    $sum_nilai = 0;
-    $sum_poin = 0;
-    $play_count = mysqli_num_rows($q2);
-
-    while ($d2 = mysqli_fetch_assoc($q2)) {
-      $sum_nilai += $d2['nilai'];
-      $sum_poin += $d2['poin'];
-    }
-    $poin = $sum_poin;
-    $nilai = round($sum_nilai / $play_count);
-
-    if (!$d['username']) stop("invalid logic, harus punya username, id_pengunjung: $d[id]");
-
+  $jumlah_player++;
+  if ($d['username']) { // jika sudah jadi pelajar
     $s2 = "SELECT * FROM tb_user WHERE username='$d[username]'";
     $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
     $d2 = mysqli_fetch_assoc($q2);
-    $nama = $d2['nama'];
+    $nama = $d2['nama']; // ambil nama pelajar
     $d['nama'] = ucwords(strtolower($d2['nama']));
+    $gender_icon = gender_icon($d2['gender'], $d2['role']);
 
+    # ============================================================
+    # JIKA MILIK SAYA
+    # ============================================================
+    if ($d['username'] == $username) include 'update_tmp.php';
 
-    $average_icon = '#️⃣';
-    if ($d2['role'] == 1) { // pelajar
-      $user_icon = $d2['gender'] == 'p' ? '👩' : '🧒';
-    } elseif ($d2['role'] == 2) { // ortu
-      $user_icon = $d2['gender'] == 'p' ? '👩‍🍼' : '👴';
+    # ============================================================
+    # AMBIL DARI DATA TMP
+    # ============================================================
+    $s2 = "SELECT * FROM tb_tmp WHERE username='$d[username]'";
+    $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
+    $d2 = mysqli_fetch_assoc($q2);
+    $poin = $d2['poin'] ?? 0;
+    $nilai = $d2['nilai'] ?? 0;
+    $play_count = $d2['play_count'] ?? 0;
+    $durasi_jawab = '';
+  } else {
+    # ============================================================
+    # JAWABAN UNARCHIVED (PENGUNJUNG ONLY)
+    # ============================================================
+    $s2 = "SELECT a.*,
+    b.status, 
+    b.waktu_load, 
+    b.waktu_submit,
+    c.lp 
+    FROM tb_jawaban a 
+    JOIN tb_paket_jawaban b ON a.id_paket=b.id 
+    JOIN tb_soal c ON a.id_soal=c.id 
+    WHERE a.id_paket='$id_paket' -- milik current pengunjung 
+    AND b.id_pengunjung = $d[id] 
+    AND a.archived is null -- yang di archived ambil dari poin paket
+    ";
+    $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
+    $jumlah_jawab = mysqli_num_rows($q2);
+    $nilai = 0;
+    $benar = 0;
+    $durasi_jawab = 0;
+    if ($jumlah_jawab and !$d['username']) { // no username = pengunjung only
+      $flat_reward = 0;
+      while ($d2 = mysqli_fetch_assoc($q2)) {
+        if ($d2['jawaban_benar'] == $d2['jawaban']) {
+          $benar++;
+          $flat_reward += $d2['lp'];
+        }
+        $durasi_jawab = $d2['waktu_submit'] ? strtotime($d2['waktu_submit']) - strtotime($d2['waktu_load']) : 0;
+      }
+      $nilai = round($benar * 100 / $jumlah_jawab);
+      $poin = round($flat_reward * (((100 / $jumlah_jawab) * $benar) / 100));
+      $gender_icon = '👤';
+    } else { // khusus user, abaikan data user yang sedang main (unarchived)
+      # ============================================================
+      # AMBIL POIN DAN NILAI DARI DATA PAKET
+      # ============================================================
+      $s2 = "SELECT * FROM tb_paket_jawaban WHERE id_pengunjung=$d[id]";
+      $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
+      $sum_nilai = 0;
+      $sum_poin = 0;
+      $play_count = mysqli_num_rows($q2);
+
+      while ($d2 = mysqli_fetch_assoc($q2)) {
+        $sum_nilai += $d2['nilai'];
+        $sum_poin += $d2['poin'];
+      }
+      $poin = $sum_poin;
+      $nilai = round($sum_nilai / $play_count);
     }
   }
 
-  if ($i > 10) break;
+
+  if ($jumlah_player > 10) break;
   $rrank[$d['id']] = [
     'poin' => $poin,
     'nilai' => $nilai,
     'play_count' => $play_count,
     'nama' => $d['nama'],
     'durasi_jawab' => $durasi_jawab,
-    'average_icon' => $average_icon,
-    'user_icon' => $user_icon,
+    'gender_icon' => $gender_icon,
   ];
 }
 
@@ -133,6 +146,7 @@ uasort($rrank, function ($a, $b) {
   // Jika poin sama, bandingkan durasi_jawab (asc)
   return $a['durasi_jawab'] <=> $b['durasi_jawab'];
 });
+
 
 $my_rank = $num_rows;
 $i = 0;
@@ -166,9 +180,9 @@ foreach ($rrank as $k => $d) {
   $tr .= "
     <tr class='$my_data'>
       <td><div class=right>$medal$i</div></td>
-      <td>$d[nama] $d[user_icon]</td>
+      <td>$d[nama] $d[gender_icon]</td>
       <td>$d[poin]</td>
-      <td>$d[average_icon]$d[nilai]</td>
+      <td>$d[nilai]</td>
     </tr>
   ";
 }
@@ -181,7 +195,7 @@ $leaderboard = "
     <h1 class='text-center f24'>🏆 Leaderboard 🏆</h1>
 
     <div class='score-box'>
-      Kamu Rank: <strong>$my_rank</strong> dari $num_rows
+      Kamu Rank: <strong>$my_rank</strong> dari $jumlah_player
     </div>
 
     <table id=tb-hasil-quiz class='table table-dark'>
@@ -223,6 +237,8 @@ $leaderboard = "
 ";
 
 echo $leaderboard;
+
+abort_quiz();
 ?>
 <script>
   $(function() {

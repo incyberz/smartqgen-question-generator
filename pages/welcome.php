@@ -73,18 +73,9 @@ if ($id_pengunjung) {
         <a href=?register class="btn btn-secondary">
           Register 👉
         </a>
-        <span class="btn btn-secondary" id=show-login>
+        <a href=?login class="btn btn-secondary">
           Login 👉
-        </span>
-        <div id="login" class="hideit blok-login mt3 wadah">
-          <input class="mb2 tengah" type="text" id="input-username" placeholder="Masukan username..." maxlength="20">
-          <input class="mb2 tengah" type="password" id="input-password" placeholder="Masukan password..." maxlength="20">
-          <div class="login-error red mb2"></div>
-          <span class='btn btn-primary w-100 mb2' id=btn_login>Login</span>
-          <span class="btn btn-secondary w-100" id=back-to-opsi>
-            ⚙️ Back to Opsi
-          </span>
-        </div>
+        </a>
 
       </div>
 
@@ -146,55 +137,6 @@ if ($id_pengunjung) {
         $(".blok-welcome-logo").slideToggle();
       });
 
-      $("#show-login").click(function() {
-        $("#show-login").slideUp();
-        $(".blok-login").slideDown();
-        $(".blok-opsies").slideUp();
-      });
-
-      $("#back-to-opsi").click(function() {
-        $("#show-login").slideDown();
-        $(".blok-login").slideUp();
-        $(".blok-opsies").slideDown();
-      });
-
-      // =================================================
-      // LOGIN HANDLER
-      // =================================================
-      $("#input-username").keyup(function() {
-        $(this).val(
-          $(this).val()
-          .trim()
-          .toLowerCase()
-          .replace(/[^a-z` ]/g, "")
-        );
-      });
-
-      $("#btn_login").click(function() {
-        let username = $('#input-username').val()
-          .trim()
-          .toLowerCase()
-          .replace(/[^a-z]/g, '');
-        let password = $('#input-password').val();
-        if (!username) {
-          $('#input-username').focus();
-          return;
-        } else if (!password) {
-          $('#input-password').focus();
-          return;
-        }
-
-        $.ajax({
-          url: `ajax/ajax-login-process.php?username=${username}&password=${password}`,
-          success: function(a) {
-            if (a.trim() == 'OK') {
-              location.replace('?dashboard');
-            } else {
-              $('.login-error').html(a);
-            }
-          }
-        })
-      });
     })
   </script>
 <?php }

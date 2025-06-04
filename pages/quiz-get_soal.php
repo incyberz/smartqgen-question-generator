@@ -46,12 +46,13 @@ $_SESSION['qgen_id_paket'] = $id_paket;
 $s = "SELECT 
   a.*,
   b.nama_materi as materi,
-  b.jenjang,
+  d.nama_jenjang as jenjang,
   c.nama_mapel as mapel
   FROM tb_soal a 
   JOIN tb_materi b ON a.id_materi = b.id 
   JOIN tb_mapel c ON b.id_mapel = c.id 
-  WHERE a.status = 100
+  JOIN tb_jenjang d ON c.jenjang = d.jenjang 
+  WHERE a.status >= 1 -- soal aktif
   ORDER BY rand()
   LIMIT 5";
 

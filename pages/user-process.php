@@ -5,6 +5,7 @@ if (isset($_POST['btn_claim_poin'])) {
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   $s = "UPDATE tb_paket_jawaban SET status=100 WHERE id = $_POST[btn_claim_poin]";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  include 'update_tmp.php';
   jsurl();
 } elseif (isset($_POST['posisi_ortu'])) {
   $s = "UPDATE tb_ortu SET posisi_ortu=$_POST[posisi_ortu] WHERE username = '$username'";
