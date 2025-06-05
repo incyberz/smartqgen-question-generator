@@ -75,7 +75,7 @@ echo "
       Saldo tersedia: <span class=kuning>Rp $format_saldo</span>
     </div>
     
-    <h4 class='border-top pt2 mt3'>History Belajar</h4>
+    <h4 class='border-top pt2 mt3'>Review History Belajar</h4>
     <table class=''>
       $tr_history
     </table>

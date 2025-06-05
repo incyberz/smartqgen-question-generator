@@ -53,7 +53,7 @@ if ($param == 'manage_trx') {
           </td>
           <td>
             Rp $format_nominal
-            <div class='mt1'><a href=?approve_pencairan&id_trx=$d[id] class='btn btn-primary btn-sm'>Approve</a></div>
+            <div class='mt1'><a href=?approve_pencairan&id_trx=$d[id] class='btn btn-primary btn-sm'>Detail Approve</a></div>
           </td>
         </tr>
         $tr_pencairan

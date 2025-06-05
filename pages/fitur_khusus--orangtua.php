@@ -50,8 +50,8 @@ if ($selisih > 300) {
   # ============================================================
   # JIKA LEBIH DARI 5 MENIT MAKA REUPDATE SALDO
   # ============================================================
-  include 'history_trx.php'; // update DB
-  $tmp['saldo'] = $csaldo; // update var
+  include 'update_saldo.php'; // update DB
+  $tmp['saldo'] = $real_saldo; // update var
 }
 $saldo_show = number_format($tmp['saldo']);
 

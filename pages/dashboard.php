@@ -6,6 +6,7 @@
   }
 </style>
 <?php
+akses('dashboard');
 include 'user-process.php';
 include 'opsi_quiz.php';
 include "$dotdot/includes/hari_tanggal.php";

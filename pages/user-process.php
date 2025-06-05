@@ -109,11 +109,11 @@ if (isset($_POST['btn_claim_poin'])) {
     # ============================================================
     # RECHECK SALDO ORTU
     # ============================================================
-    $csaldo = 0;
-    include 'history_trx.php'; // update csaldo pada history
+    $real_saldo = 0;
+    include 'update_saldo.php'; // update csaldo pada history
 
-    if ($csaldo < $trx['nominal']) {
-      alert("Maaf, saldo tidak mencukupi.<hr class='mt3 mb3'>Saldo: $csaldo, request Rp $trx[nominal]");
+    if ($real_saldo < $trx['nominal']) {
+      alert("Maaf, saldo tidak mencukupi.<hr class='mt3 mb3'>Saldo: $real_saldo, request Rp $trx[nominal]");
     } else {
       alert("Processing Pencairan...", 'info');
       mysqli_query($cn, "UPDATE tb_trx SET approv_date = NOW() WHERE id=$id") or die(mysqli_error($cn));
@@ -121,6 +121,13 @@ if (isset($_POST['btn_claim_poin'])) {
     }
   }
   jsurl('?', 3000);
+} elseif (isset($_POST['btn_sudah_terima_uang'])) {
+  $id = intval($_POST['btn_sudah_terima_uang']);
+  if ($id) {
+    $s = "UPDATE tb_trx SET take_date = NOW() WHERE id=$id";
+    $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  }
+  jsurl();
 } elseif ($_POST) {
 
   echo '<pre>';

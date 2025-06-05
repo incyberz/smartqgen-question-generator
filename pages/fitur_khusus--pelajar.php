@@ -50,10 +50,52 @@ $info_kelas = "
 # PUNYA KELAS DAN ORTU
 # ============================================================
 if ($kelas) {
-  $info_pencairan = "
-    <a href=?pencairan class='btn btn-primary mt3'>💰 Pencairan Poin 👉</a>
-  ";
+  $info_pencairan = "<a href=?pencairan class='btn btn-primary mt3'>💰 Pencairan Poin 👉</a>";
+  # ============================================================
+  # CEK TRX PENCAIRAN
+  # ============================================================
+  $s = "SELECT * FROM tb_trx WHERE username = '$username' 
+  AND (approv_date is null OR take_date is null)";
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  if (mysqli_num_rows($q)) {
+    # ============================================================
+    # OVERIDE BUTTON INFO PENCAIRAN
+    # ============================================================
+    while ($d = mysqli_fetch_assoc($q)) {
+      $nominal = number_format($d['nominal']);
+      if ($d['approv_date'] and !$d['take_date']) {
+        $Papa = $kelas['posisi_ortu'];
+        $tanggal = hari_tanggal($d['approv_date']);
+        $info_pencairan = "
+          <div class='border-top mt4 pt4 pelajar'>
+            $Papa kamu sudah Approv Pencairan 
+            <div class=f30>Rp $nominal,-</div> 
+            <div class='f12 abu'>Hari $tanggal</div>
+            <div class='mt2 mb2'>Apakah kamu sudah menerimanya?</div>
+            <div class='grid2 gap1'>
+              <form method=post>
+                <button class='btn btn-primary w-100' onclick='return confirm(`Confirm?`)' name=btn_sudah_terima_uang value=$d[id]>Sudah</button>
+              </form>
+              <div>
+                <a href=?pencairan>
+                  <button class='btn btn-secondary w-100'>Belum</button>
+                </a>
+              </div>
+            </div>
+          </div>
+        ";
+      }
+    }
+  }
 
+
+
+
+
+
+  # ============================================================
+  # DATA PESERTA KELAS
+  # ============================================================
   $s = "SELECT a.*,
   b.nama as nama_peserta,
   c.poin,
