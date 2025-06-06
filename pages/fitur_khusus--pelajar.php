@@ -64,7 +64,6 @@ if ($kelas) {
     while ($d = mysqli_fetch_assoc($q)) {
       $nominal = number_format($d['nominal']);
       if ($d['approv_date'] and !$d['take_date']) {
-        $Papa = $kelas['posisi_ortu'];
         $tanggal = hari_tanggal($d['approv_date']);
         $info_pencairan = "
           <div class='border-top mt4 pt4 pelajar'>
@@ -74,7 +73,7 @@ if ($kelas) {
             <div class='mt2 mb2'>Apakah kamu sudah menerimanya?</div>
             <div class='grid2 gap1'>
               <form method=post>
-                <button class='btn btn-primary w-100' onclick='return confirm(`Confirm?`)' name=btn_sudah_terima_uang value=$d[id]>Sudah</button>
+                <button class='btn btn-primary w-100' onclick='return confirm(`Confirm ?`)' name=btn_sudah_terima_uang value=$d[id]>Sudah</button>
               </form>
               <div>
                 <a href=?pencairan>
@@ -145,6 +144,10 @@ if ($kelas) {
 }
 
 $tmp_poin = number_format($tmp['poin']);
+$sum_pencairan = $tmp['sum_pencairan'];
+$sisa_poin = $tmp['poin'] - $sum_pencairan;
+$sisa_poin_show = number_format($sisa_poin);
+$sum_pencairan_show = number_format($sum_pencairan);
 
 $fitur = "
   <div class=ortu>
@@ -155,8 +158,9 @@ $fitur = "
         <div class='progress-bar progress-bar-animated' style=width:$persen%></div>
       </div>
       <span class=f12>$unfill_poin LP to Next Level</span>
-      <h2 class='mb2 border-top pt4 mt4'>Learning Points</h2>
-      <div class='f22 bold'>$tmp_poin <i class='f14'>LP</i></div>
+      <h2 class='mb1 border-top pt4 mt4'>Learning Points</h2>
+      <div class='f30 bold mb2'>$sisa_poin_show <i class='f14'>LP</i></div>
+      <div class='f14 green border-top pt2'>$tmp_poin <span class='darkred f12'>- $sum_pencairan_show</span></div>
       $info_pencairan
     </div>
   </div>

@@ -6,6 +6,7 @@
   }
 </style>
 <?php
+if ($user['role'] == 3) jsurl('?pengajar');
 akses('dashboard');
 include 'user-process.php';
 include 'opsi_quiz.php';
@@ -73,16 +74,20 @@ if (!$history) {
   # HITUNG LP
   # ============================================================
   // include 'hitung-lp.php'; // aborted, sudah ada data tmp
+  if ($user['is_pengajar'] and $user['role'] == 2) {
+    $switch_role = "<a class='f12 mb2 hover' href=?pengajar><button>Switch to Role Pengajar 👨‍🏫</button></a>";
+  }
 
   $limit = 'LIMIT 1';
   $judul = "
     <h1>Dashboard</h1>
     <p>Selamat Datang 👋 $user[nama] $gender_icon</p>
     <div class='f12 mb2'>Anda login sebagai $user[sebagai] $info_sub_role</div>
+    $switch_role
   ";
   $claimed_title = "
-    <h2 class='tengah f20 pt4 mt4 border-top'>✅ Claimed Last Kuis</h2>
-    <p class=f14>Claimed Kuis tidak dapat dihapus karena poinnya sudah ditambahkan ke Learning Point</p>
+    <h2 class='tengah f20 pt4 mt4 border-top'>✅ Last Kuis</h2>
+    <p class=f14>Poin Last Kuis sudah ditambahkan menjadi Learning Point</p>
   ";
   $bottom_links = "
     <div class='pt2 tengah' style='display:grid; grid-template-columns: 50% 50%'>
@@ -97,7 +102,7 @@ if (!$history) {
   $limit = 'LIMIT 1000';
   $judul = "
     <h2>⏲️ History Kuis</h2>
-    <p class=f14>Kuis-kuis yang pernah kamu jawab dan sudah Claim Point.</p>
+    <p class=f14>Kuis-kuis yang pernah kamu jawab</p>
   ";
   $claimed_title = '';
   $bottom_links = "<a class='btn btn-secondary mt3' href=?dashboard>Back to Dashboard</a>";

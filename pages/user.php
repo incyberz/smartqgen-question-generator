@@ -6,6 +6,9 @@ if ($id_pengunjung) {
     c.id as id_pengunjung,
     c.created_at,
     d.*,
+    d.poin - d.sum_pencairan as sisa_poin,
+    (SELECT 1 FROM tb_pengajar WHERE username=a.username) is_pengajar, 
+    (SELECT 1 FROM tb_admin WHERE username=a.username) is_admin, 
     (SELECT posisi_ortu FROM tb_ortu WHERE username=a.username) posisi_ortu, 
     (SELECT COUNT(1) FROM tb_kelas WHERE username=a.username) jumlah_kelas 
     FROM tb_user a 
@@ -20,7 +23,7 @@ if ($id_pengunjung) {
 
     if (!$user) {
       # ============================================================
-      # AUTO-INSERT DATA TMP
+      # AUTO-INSERT DATA TMP (FIRST LOGIN ONLY)
       # ============================================================
       mysqli_query($cn, "INSERT INTO tb_tmp (username) VALUES ('$username')") or die(mysqli_error($cn));
       alert('updating user data...', 'info');
@@ -28,7 +31,7 @@ if ($id_pengunjung) {
     }
 
     # ============================================================
-    # DATA KELAS DAN ORTU
+    # DATA KELAS DAN ORTU KHUSUS PELAJAR
     # ============================================================
     $kelas = [];
     if ($user['role'] == 1) {
@@ -49,7 +52,19 @@ if ($id_pengunjung) {
       WHERE a.username='$username'";
       $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
       $kelas = mysqli_fetch_assoc($q);
+    } elseif ($user['role'] > 1) {
+      $pengajar = [];
+      if ($user['is_pengajar']) {
+        $s = "SELECT * FROM tb_pengajar a WHERE a.username='$username'";
+        $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+        $pengajar = mysqli_fetch_assoc($q);
+      }
     }
+
+    # ============================================================
+    # CAPTION Papa, Mama, Kakek, dll
+    # ============================================================
+    $Papa = $kelas ? $kelas['posisi_ortu'] : 'Ortu';
 
     # ============================================================
     # GENDER ICON 
@@ -75,9 +90,21 @@ if ($id_pengunjung) {
       $user = mysqli_fetch_assoc($q);
       $_SESSION['qgen_username'] = $user['username'];
     }
-  }
+  } // end if !$username
   $user['nama'] = $user['nama'] ?? '';
   $user['nama'] = ucwords(strtolower($user['nama']));
-}
+} // end if $id_pengunjung
+
+# ============================================================
+# ROLES
+# ============================================================
 $user['role'] = $user['role'] ?? null;
-$_SESSION['qgen_role'] = $user['role'];
+
+# ============================================================
+# ORTU BOLEH PINDAH ROLE KE PENGAJAR
+# ============================================================
+if (!isset($_SESSION['qgen_role'])) {
+  $_SESSION['qgen_role'] = $user['role'];
+} else { // set role from SESSION
+  $user['role'] = $_SESSION['qgen_role'];
+}

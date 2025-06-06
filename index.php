@@ -15,6 +15,7 @@ $default_src = 'assets/img/pelajar.png';
 $id_pengunjung = $_SESSION['qgen_id_pengunjung'] ?? null;
 $id_paket = $_SESSION['qgen_id_paket'] ?? null;
 $username = $_SESSION['qgen_username'] ?? null;
+$switch_role = '';
 
 # ============================================================
 # GET PARAM
@@ -91,9 +92,11 @@ $nama_user = $user['nama'] ?? null;
 <body>
   <div class="container">
     <span id="id_pengunjung" class="hideit"><?= $id_pengunjung ?></span>
-    <?php include 'pages/btn_logout.php'; ?>
-    <?php include 'pages/btn_home.php'; ?>
-    <?php include "pages/$param.php"; ?>
+    <?php
+    include 'pages/btn_logout.php';
+    include 'pages/btn_home.php';
+    include "pages/$param.php";
+    ?>
   </div>
   <?php include 'includes/script_btn_aksi.php'; ?>
   <script>

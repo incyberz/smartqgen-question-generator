@@ -1,5 +1,6 @@
 <?php
-if ($username and $user['role'] >= 2) {
+$config_default = [];
+if ($username and $user['role'] >= 1) {
   $config_default = [
     'nominal_pencairan_min' => [
       'value' => 2000,
