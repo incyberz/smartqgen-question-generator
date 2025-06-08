@@ -101,6 +101,7 @@ for ($i = 1; $i <= 5; $i++) {
 # ============================================================
 $paid_paket = [];
 $suspended_paket = []; // paid until masih ada namun status 0
+$paids = '';
 if (isset($kelas) and $kelas) {
   $s = "SELECT 
   a.id,
@@ -109,7 +110,8 @@ if (isset($kelas) and $kelas) {
   a.status,
   a.verif_by,
   a.verif_date,
-  b.nama_paket
+  b.nama_paket,
+  (SELECT COUNT(1) FROM tb_soal WHERE id_paket=b.id) jumlah_soal
 
   FROM tb_paid a 
   JOIN tb_paket_soal b ON a.id_paket=b.id 
@@ -123,6 +125,25 @@ if (isset($kelas) and $kelas) {
     } else {
       if ($d['status']) {
         $paid_paket[$id] = $d;
+        $expire = tanggal($d['paid_until']);
+        $paids .= "
+          <div class='wadah border-biru gradasi-hijau' >
+            <div class='' style='display:grid; grid-template-columns:auto 15%; gap:15px'>
+              <div>
+                <div class='blue'>$d[nama_paket]</div>
+              </div>
+              <div>
+                <a href=?quiz_started&id_paket=$d[id]>
+                  <button class='btn btn-primary btn-sm'>Play</button>
+                </a>
+              </div>
+            </div>
+            <div class='f12 abu flex-between'>
+              <div>hingga: $expire</div>
+              <div class=''>$d[jumlah_soal] soal</div>
+            </div>
+          </div>
+        ";
       } else {
         $suspended_paket[$id] = $d;
       }
@@ -130,9 +151,6 @@ if (isset($kelas) and $kelas) {
   }
 }
 
-// echo '<pre>';
-// print_r($paid_paket);
-// echo '</pre>';
 
 
 
@@ -149,6 +167,12 @@ if (isset($kelas) and $kelas) {
 # FINAL OUTPUT
 # ============================================================
 $opsi_quiz = "
+  <h2>Paket Tersedia</h2>
+  <div class=left>
+    $paids
+  </div>
+
+
   <div class='blok-opsi blok-opsi-jenjang mb2 border-top mt4 pt4'>
     $opsi_jenjang
   </div>

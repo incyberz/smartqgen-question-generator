@@ -11,7 +11,11 @@
 # ============================================================
 $s = "SELECT a.*,
 (SELECT nama_mapel FROM tb_mapel WHERE id=a.id_mapel) mapel, 
-(SELECT COUNT(1) FROM tb_soal WHERE id_paket=a.id) jumlah_soal,
+(
+  SELECT COUNT(1) FROM tb_soal p 
+  JOIN tb_materi q ON p.id_materi=q.id 
+  JOIN tb_mapel r ON q.id_mapel=r.id 
+  WHERE r.jenjang=a.jenjang) jumlah_soal,
 (
   SELECT paid_until FROM tb_paid 
   WHERE id_paket=a.id 

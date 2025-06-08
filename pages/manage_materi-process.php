@@ -1,12 +1,4 @@
 <?php
-akses('add_materi');
-include 'includes/key2kolom.php';
-$is_admin = $user['is_admin'];
-
-
-# ============================================================
-# PROCESS
-# ============================================================
 if (isset($_POST['btn_add_mapel'])) {
   $jenjang = $_POST['btn_add_mapel'];
   $nama_mapel = $_POST['nama_mapel'];
@@ -41,7 +33,3 @@ if (isset($_POST['btn_add_mapel'])) {
   echo '<b style=color:red>Belum ada handler untuk Manage Mapel POST diatas.</b></pre>';
   exit;
 }
-?>
-
-<h2 class="ondev">Add Materi</h2>
-<div class="red">On development...</div>

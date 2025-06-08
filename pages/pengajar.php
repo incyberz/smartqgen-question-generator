@@ -28,7 +28,7 @@ echo "
 <div class='border-top mt4 pt4 mb2'>
   Fitur Pengajar:
 </div>
-<a class='btn btn-primary' href=?manage_mapel>Manage Mapel</a>
+<a class='btn btn-primary' href=?manage_materi>Manage Mapel</a>
 <a class='btn btn-primary' href=?manage_materi>Manage Materi</a>
 
 

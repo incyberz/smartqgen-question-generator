@@ -71,12 +71,16 @@ $nama_user = $user['nama'] ?? null;
   # INCLUDES
   # ============================================================
   include 'includes/alert.php';
-  // include 'includes/insho_styles.php';
+  include 'includes/insho_styles.php';
   include 'includes/img_icon.php';
   include 'includes/jsurl.php';
   include 'includes/set_h2.php';
-  include 'includes/akses.php';
   include 'includes/tanggal.php';
+
+  # ============================================================
+  # MANAJEMEN HAK AKSES
+  # ============================================================
+  include 'akses.php';
   // include 'includes/only.php'; // sudah diwakili oleh akses.php
   $img_logout = img_icon('logout');
 
@@ -84,7 +88,7 @@ $nama_user = $user['nama'] ?? null;
   ?>
   <link rel="stylesheet" href="assets/css/btn.css">
   <link rel="stylesheet" href="assets/css/btn-outlined.css">
-  <link rel="stylesheet" href="assets/css/insho-styles.css">
+  <!-- <link rel="stylesheet" href="assets/css/insho-styles.css"> -->
   <link rel="stylesheet" href="assets/css/ceria.css">
   <script src="assets/js/jquery.js"></script>
 </head>

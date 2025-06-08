@@ -12,16 +12,12 @@ $username = $_SESSION['qgen_username'] ?? null;
 # ============================================================
 # DELETE PAKET SOAL KOSONG DAN LJK NYA
 # ============================================================
-$s = "SELECT id FROM tb_paket_jawaban WHERE status is null AND id_pengunjung=$id_pengunjung";
+$s = "DELETE FROM tb_paket_jawaban WHERE status is null AND id_pengunjung=$id_pengunjung";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-while ($d = mysqli_fetch_assoc($q)) {
-  $s2 = "DELETE FROM tb_jawaban WHERE id_paket = $d[id] AND archived is null";
-  $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
-}
 
 
 # ============================================================
-# BUAT PAKET BARU
+# BUAT PAKET BARU UNTUK PENGUNJUNG
 # ============================================================
 $s = "INSERT INTO tb_paket_jawaban (id_pengunjung) VALUES ($id_pengunjung)";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
@@ -41,7 +37,7 @@ $_SESSION['qgen_id_paket'] = $id_paket;
 
 
 # ============================================================
-# MAIN SELECT SOAL
+# MAIN SELECT SOAL RANDOM SD
 # ============================================================
 $s = "SELECT 
   a.*,
@@ -52,9 +48,15 @@ $s = "SELECT
   JOIN tb_materi b ON a.id_materi = b.id 
   JOIN tb_mapel c ON b.id_mapel = c.id 
   JOIN tb_jenjang d ON c.jenjang = d.jenjang 
-  WHERE a.status >= 1 -- soal aktif
+  WHERE a.status >= 1 -- soal aktif 
+  AND 1 
   ORDER BY rand()
   LIMIT 5";
+
+echo '<pre>';
+print_r($s);
+echo '<b style=color:red>Developer SEDANG DEBUGING: exit(true)</b></pre>';
+exit;
 
 $q = mysqli_query($cn, $s);
 if (!$q) {

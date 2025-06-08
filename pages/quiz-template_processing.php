@@ -25,7 +25,7 @@ $opsi = [
   round(evaluateFormula($soal['wrong_formula_1'], $randomVars), 2),
   round(evaluateFormula($soal['wrong_formula_2'], $randomVars), 2),
   round(evaluateFormula($soal['wrong_formula_3'], $randomVars), 2),
-  "$jawaban_benar"
+  $jawaban_benar
 ];
 shuffle($opsi);
 
