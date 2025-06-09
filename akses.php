@@ -26,6 +26,9 @@ function akses($fitur)
     'manage_materi' => [3, 100],
     'manage_soal' => [3, 100],
     'update_kelas_materi' => [3, 100],
+    'lihat_kalimat_soal_per_materi' => [3, 100],
+    'manage_paket' => [100],
+    'assign_materi_to_paket' => [100],
   ];
   if (key_exists($fitur, $fiturs)) {
     only($fiturs[$fitur]);

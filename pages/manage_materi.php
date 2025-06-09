@@ -42,6 +42,7 @@ b.nama_jenjang,
 (SELECT COUNT(1) FROM tb_materi WHERE id_mapel=a.id) materi 
 FROM tb_mapel a 
 JOIN tb_jenjang b ON a.jenjang=b.jenjang 
+WHERE a.jenjang = '$get_jenjang'
 ORDER BY b.urutan, a.urutan, a.nama_mapel
 ";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
@@ -221,6 +222,6 @@ echo "$tb";
         })
       }
 
-    })
+    });
   })
 </script>

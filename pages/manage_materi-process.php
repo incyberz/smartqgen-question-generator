@@ -30,6 +30,6 @@ if (isset($_POST['btn_add_mapel'])) {
 } elseif (isset($_POST) and $_POST) {
   echo '<pre>';
   print_r($_POST);
-  echo '<b style=color:red>Belum ada handler untuk Manage Mapel POST diatas.</b></pre>';
+  echo '<b style=color:red>Belum ada handler untuk Manage Materi dari POST diatas.</b></pre>';
   exit;
 }

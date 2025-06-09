@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once '../conn.php';
-require_once '../includes/akses.php';
+require_once '../akses.php';
 require_once '../includes/alert.php';
 
 if (!isset($_SESSION['qgen_username'])) {

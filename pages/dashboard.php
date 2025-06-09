@@ -7,6 +7,7 @@
 </style>
 <?php
 if ($user['role'] == 3) jsurl('?pengajar');
+if ($user['role'] == 100) jsurl('?admin');
 akses('dashboard');
 include 'user-process.php';
 include 'opsi_quiz.php';
@@ -76,6 +77,9 @@ if (!$history) {
   // include 'hitung-lp.php'; // aborted, sudah ada data tmp
   if ($user['is_pengajar'] and $user['role'] == 2) {
     $switch_role = "<a class='f12 mb2 hover' href=?pengajar><button>Switch to Role Pengajar 👨‍🏫</button></a>";
+    if ($user['is_admin']) {
+      $switch_role .= " <a class='f12 mb2 hover' href=?admin><button>Switch to Role Admin 🤵‍♂️</button></a>";
+    }
   }
 
   $limit = 'LIMIT 1';
