@@ -1,11 +1,38 @@
 <?php
-if (isset($_POST['btn_add_mapel'])) {
+if (isset($_POST['btn_add_materi'])) {
+  $id_mapel = $_POST['btn_add_materi'];
+  $nama_materi = $_POST['nama_materi'];
+  $nama_materi = ucwords(preg_replace('/[^a-z 0-9]/', '', strtolower($nama_materi)));
+  $kelas = intval($_POST['kelas']);
+  $urutan = intval($_POST['urutan']);
+
+  if ($nama_materi and $kelas and $urutan) {
+    $s = "INSERT INTO tb_materi (
+      urutan,
+      nama_materi,
+      id_mapel,
+      kelas,
+      created_by
+    ) VALUES (
+      '$urutan',
+      '$nama_materi',
+      '$id_mapel',
+      '$kelas',
+      '$username'
+    )";
+
+    $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+    jsurl();
+  } else {
+    alert('Invalid input value dalam proses insert materi.');
+  }
+} elseif (isset($_POST['btn_add_mapel'])) {
   $jenjang = $_POST['btn_add_mapel'];
   $nama_mapel = $_POST['nama_mapel'];
   $singkatan = $_POST['singkatan'];
 
-  $nama_mapel = ucwords(preg_replace('/[^a-z0-9 ]/', '', strtolower($nama_mapel)));
-  $singkatan = preg_replace('/[^a-z0-9]/', '', strtolower($singkatan));
+  $nama_mapel = ucwords(preg_replace('/[^a-zA-Z0-9 ]/', '', $nama_mapel));
+  $singkatan = ucwords(preg_replace('/[^a-z A-Z0-9]/', '', $singkatan));
 
   $s = "SELECT MAX(urutan)+1 as urutan FROM tb_mapel WHERE jenjang='$jenjang'";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
@@ -26,6 +53,11 @@ if (isset($_POST['btn_add_mapel'])) {
     '$username'
   )";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  // $id_mapel = mysqli_insert_id($cn);
+
+  // auto insert materi tmp
+
+
   jsurl();
 } elseif (isset($_POST['btn_add_paket_mapel'])) {
   $t = explode('--', $_POST['btn_add_paket_mapel']);

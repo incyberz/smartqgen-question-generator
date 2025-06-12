@@ -21,12 +21,17 @@ function akses($fitur)
     'drop_peserta_kelas' => [2, 3],
     'approve_pencairan' => [2, 3],
     'konfigurasi_pencairan' => [2, 3],
+
     'manage_mapel' => [3, 100],
+
     'add_materi' => [3, 100],
     'manage_materi' => [3, 100],
-    'manage_soal' => [3, 100],
+    'ubah_nama_materi' => [3, 100],
+    'hapus_materi' => [3, 100],
     'update_kelas_materi' => [3, 100],
     'lihat_kalimat_soal_per_materi' => [3, 100],
+
+    'manage_soal' => [3, 100],
     'manage_paket' => [100],
     'assign_materi_to_paket' => [100],
   ];

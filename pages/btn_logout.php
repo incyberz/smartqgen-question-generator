@@ -1,5 +1,8 @@
 <?php
 if ($username and $param != 'quiz-started') {
+  $role_show = '';
+  if ($user['is_pengajar']) $role_show = 'Pengajar';
+  if ($user['is_admin']) $role_show = 'Admin';
   echo "
     <style>
       .btn-logout {
@@ -20,7 +23,7 @@ if ($username and $param != 'quiz-started') {
       }
     </style>
     <div class='btn-logout'>
-      <a href='?my_profile'>👤</a>
+      <a href='?my_profile'>$role_show 👤</a>
       <a href='?logout' onclick='return confirm(`Logout?`)'>❌</a>
     </div>  
   ";

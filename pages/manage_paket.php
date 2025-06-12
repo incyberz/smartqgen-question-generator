@@ -3,7 +3,8 @@ akses('manage_paket');
 include 'includes/key2kolom.php';
 $is_admin = $user['is_admin'];
 $get_jenjang = $_GET['jenjang'] ?? 'SD';
-include 'option_kelas.php';
+$get_id_mapel = $_GET['id_mapel'] ?? '';
+$get_kelas = $_GET['kelas'] ?? '';
 
 
 # ============================================================
@@ -17,18 +18,99 @@ include 'manage_paket-process.php';
 # ============================================================
 $s = "SELECT * FROM tb_jenjang ORDER BY urutan";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-$nav = '';
+$nav_jenjang = '';
 $i = 0;
+$jenjang = [];
 while ($d = mysqli_fetch_assoc($q)) {
   $i++;
   if ($get_jenjang == $d['jenjang']) {
     $item_nav = "<button class='btn btn-sm btn-primary'>$d[nama_jenjang]</button>";
+    $jenjang = $d;
   } else {
     $item_nav = "<a href=?manage_paket&jenjang=$d[jenjang]><button class='btn btn-sm btn-secondary'>$d[nama_jenjang]</button></a>";
   }
-  $nav .= "<div>$item_nav</div>";
+  $nav_jenjang .= "<div>$item_nav</div>";
 }
-echo "<div class='flex-center gap1 gradasi-kuning' style='z-index:3; position:sticky; top:0; padding:15px; margin:-15px;'>$nav</div>";
+$cnama_jenjang = $jenjang['nama_jenjang'];
+
+# ============================================================
+# NAV MAPEL
+# ============================================================
+$s = "SELECT *,a.singkatan as mapel 
+FROM tb_mapel a WHERE a.jenjang='$get_jenjang' 
+ORDER BY a.urutan";;
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+$nav_mapel = '';
+$i = 0;
+$mapel = [];
+while ($d = mysqli_fetch_assoc($q)) {
+  $i++;
+  if ($get_id_mapel == $d['id']) {
+    $item_nav = "<button class='btn btn-sm btn-primary'>$d[mapel]</button>";
+    $mapel = $d;
+  } else {
+    $item_nav = "<a href=?manage_paket&jenjang=$get_jenjang&id_mapel=$d[id]><button class='btn btn-sm btn-secondary'>$d[singkatan]</button></a>";
+  }
+  $nav_mapel .= "<div>$item_nav</div>";
+}
+$cmapel = $mapel['mapel'] ?? '';
+
+# ============================================================
+# NAV KELAS
+# ============================================================
+$get_kelas = $get_kelas ? $get_kelas : $jenjang['min_kelas'];
+$nav_kelas = '';
+for ($i = $jenjang['min_kelas']; $i <= $jenjang['max_kelas']; $i++) {
+  if ($get_kelas == $i) {
+    $item_nav = "<button class='btn btn-sm btn-primary'>$i</button>";
+  } else {
+    $item_nav = "<a href=?manage_paket&jenjang=$get_jenjang&id_mapel=$get_id_mapel&kelas=$i><button class='btn btn-sm btn-secondary'>$i</button></a>";
+  }
+  $nav_kelas .= "<div>$item_nav</div>";
+}
+
+# ============================================================
+# STICKY NAV
+# ============================================================
+echo "
+  <div class='gradasi-kuning' style='z-index:3; position:sticky; top:0; padding:15px; margin:-15px;'>
+    <div class='flex-center gap1'>
+      $nav_jenjang
+    </div>
+    <div class='flex-center gap1 mt1'>
+      $nav_mapel
+    </div>
+    <div class='flex-center gap1 mt1'>
+      $nav_kelas
+    </div>
+  </div>
+";
+
+# ============================================================
+# AUTO INSERT MATERI UNTUK MAPEL BARU
+# ============================================================
+$s = "SELECT a.id FROM tb_mapel a 
+LEFT JOIN tb_materi b ON a.id=b.id_mapel 
+WHERE b.id is null
+";
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+while ($d = mysqli_fetch_assoc($q)) {
+  $s2 = "INSERT INTO tb_materi (
+    nama_materi,
+    id_mapel,
+    kelas,
+    created_by
+  ) VALUES (
+    'NEW MATERI $jenjang[nama_jenjang]',
+    $d[id],
+    $jenjang[min_kelas],
+    '$username'
+  )";
+  $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
+}
+
+
+
 
 
 
@@ -51,6 +133,12 @@ echo "<div class='flex-center gap1 gradasi-kuning' style='z-index:3; position:st
 # ============================================================
 # ALL MATERI SESUAI JENJANG U/ SELECT  
 # ============================================================
+if (!$get_jenjang || !$get_id_mapel) {
+  stop('Silahkan pilih Jenjang dan Mapel');
+}
+
+$sql_id_mapel = $get_id_mapel ? "a.id_mapel=$get_id_mapel" : "1";
+
 $s = "SELECT 
 b.singkatan as mapel,
 c.nama_jenjang,
@@ -69,8 +157,14 @@ a.*,
 FROM tb_materi a 
 JOIN tb_mapel b ON a.id_mapel=b.id 
 JOIN tb_jenjang c ON b.jenjang=c.jenjang 
-WHERE b.jenjang='$get_jenjang'
-ORDER BY b.urutan, 
+WHERE b.jenjang='$get_jenjang' 
+AND $sql_id_mapel 
+AND a.kelas = $get_kelas 
+ORDER BY 
+b.urutan, -- BY MAPEL
+a.kelas,
+a.semester,
+a.urutan, -- BY MATERI
 a.kelas, 
 a.nama_materi
 ";
@@ -84,6 +178,7 @@ if (mysqli_num_rows($q)) {
   $last_mapel = '';
   $last_id = '';
   $last_id_mapel = '';
+  $last_urutan = '';
   while ($d = mysqli_fetch_assoc($q)) {
     $i++;
 
@@ -101,27 +196,36 @@ if (mysqli_num_rows($q)) {
       if (
         $key == 'id'
         || $key == 'date_created'
+        || $key == 'created_by'
         || $key == 'urutan'
         || $key == 'id_mapel'
         || $key == 'paket_mapel_available'
         || $key == 'nama_jenjang'
         || $key == 'min_kelas'
         || $key == 'max_kelas'
+        || $key == 'kelas'
       ) {
         continue;
       } elseif ($key == 'nama_materi') {
 
-        $btn_hapus = ($d['trx_jawaban'] || $d['trx_paket']) ? '<span style="cursor:not-allowed" onclick="alert(`Tidak dapat menghapus materi karena sudah ada Trx Jawaban/Paket.`)">🟣</span>' : "<span class='hapus-materi pointer' id='hapus-materi--$d[id]' onclick='return confirm(`Hapus materi ini?`)'>❌</span>";
+        $btn_hapus = ($d['trx_jawaban'] || $d['trx_paket']) ? '<span style="cursor:not-allowed" onclick="alert(`Tidak dapat menghapus materi karena sudah ada Trx Jawaban/Paket.`)">🟣</span>
+        ' : "
+          <span class='hapus-materi pointer' id='hapus-materi--$d[id]'>❌</span>
+        ";
 
         $value = "
           <div class='flex-between'>
             <div class='blue'>$d[urutan]. <span class='ubah-materi hover' id=ubah-materi--$d[id]>$value</span></div>
-            <div class=''>$btn_hapus</div>
+            <div class='flexy'>
+              <div class='ondev'>
+                $btn_hapus
+              </div>
+              <div class='ondev'>
+                <span class='kelas-materi hover' id=kelas-materi--$d[id]>↔️</span>
+              </div>
+            </div>
           </div>
         ";
-      } elseif ($key == 'kelas') {
-        $kelas = $d['kelas'] ?? '❓';
-        $value = "<span class='kelas-materi hover' id=kelas-materi--$d[id]>kls $kelas ↔️</span>";
       } elseif ($key == 'jumlah_soal') {
         $value = $value ? "
           <div class='hideit wadah gradasi-kuning blok-soal pointer' id=blok-soal--$d[id]></div>
@@ -194,13 +298,14 @@ if (mysqli_num_rows($q)) {
     }
     $tr .= "
       $tr_form
-      <tr $separator>
+      <tr $separator id=tr--$d[id]>
         $td
       </tr>
     ";
     $last_mapel = $d['mapel'];
     $last_id = $d['id'];
     $last_id_mapel = $d['id_mapel'];
+    $last_urutan = $d['urutan'];
 
     $tr_form_final = '';
     if ($i == $jumlah_materi) {
@@ -212,10 +317,17 @@ if (mysqli_num_rows($q)) {
   }
 }
 
-$tb = $tr ? "
+if ($tr) {
+  $thead = "<style>thead th{border:solid 1px #ccc; background:darkblue; color:white}</style>
+    <thead style='position:sticky;top:55px;'>$th</thead>";
+} else {
+  $thead = '';
+  $tr = "<tr><td><div class='alert alert-danger tengah'>Belum ada materi pada jenjang ini.</div></td></tr>";
+}
+
+$tb = "
   <table class=table>
-    <style>thead th{border:solid 1px #ccc; background:darkblue; color:white}</style>
-    <thead style='position:sticky;top:55px;'>$th</thead>
+    $thead
     $tr
 
     
@@ -239,7 +351,7 @@ $tb = $tr ? "
               required 
               name=singkatan 
               minlength='2' 
-              maxlength='10' 
+              maxlength='15' 
               placeholder='Singkatan...'
             />
           </div>
@@ -251,7 +363,7 @@ $tb = $tr ? "
     </tr>
 
   </table>
-" : alert("Data XXX tidak ditemukan.");
+";
 echo "$tb";
 
 
@@ -550,36 +662,48 @@ echo "$tb";
     });
 
     $('.ubah-materi').click(function() {
-      alert('ZZZ');
-      return;
       let tid = $(this).prop('id');
       let rid = tid.split('--');
       let aksi = rid[0];
-      let id_materi = rid[2];
-      $.ajax({
-        url: `ajax/ajax_lihat_kalimat_soal_per_materi.php?id_materi=${id_materi}`,
-        success: function(a) {
-          $('#blok-soal--' + id_materi).html(a);
-          $('.blok-soal').slideUp();
-          $('#blok-soal--' + id_materi).slideDown();
-        }
-      })
+      let id_materi = rid[1];
+      let materi = $(this).text().trim();
+      let new_nama_materi = prompt('Ubah materi:', materi);
+      if (new_nama_materi === null || materi == new_nama_materi.trim()) {
+        console.log('ubah-materi aborted');
+      } else {
+        $.ajax({
+          url: `ajax/ajax_ubah_nama_materi.php?id_materi=${id_materi}&new_nama_materi=${new_nama_materi}`,
+          success: function(a) {
+            if (a.trim() == 'OK') {
+              $('#' + tid).text(new_nama_materi);
+            } else {
+              alert(a);
+            }
+          }
+        })
+
+      }
+
 
     });
 
     $('.hapus-materi').click(function() {
-      alert('ZZZ');
-      return;
+      let y = confirm('Hapus materi ini?');
+      if (!y) return;
+
       let tid = $(this).prop('id');
       let rid = tid.split('--');
       let aksi = rid[0];
-      let id_materi = rid[2];
+      let id_materi = rid[1];
       $.ajax({
-        url: `ajax/ajax_lihat_kalimat_soal_per_materi.php?id_materi=${id_materi}`,
+        url: `ajax/ajax_hapus_materi.php?id_materi=${id_materi}`,
         success: function(a) {
-          $('#blok-soal--' + id_materi).html(a);
-          $('.blok-soal').slideUp();
-          $('#blok-soal--' + id_materi).slideDown();
+          if (a.trim() == 'OK') {
+            // $('#tr--' + id_materi).slideUp();
+            location.reload(); // agar berefek ke form tambah materi
+          } else {
+            alert(a);
+          }
         }
       })
 
